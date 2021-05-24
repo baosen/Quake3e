@@ -1,14 +1,12 @@
 
-# Quake3 Unix Makefile
+# Quake3 GNU Makefile
 #
 # Nov '98 by Zoid <zoid@idsoftware.com>
 #
 # Loki Hacking by Bernd Kreimeier
-#  and a little more by Ryan C. Gordon.
+#  and a little more by Ryan C. Gordon
 #  and a little more by Rafael Barrero
-#  and a little more by the ioq3 cr3w
-#
-# GNU Make required
+#  and a little more by the ioq3 cr3w.
 #
 COMPILE_PLATFORM=$(shell uname | sed -e 's/_.*//' | tr '[:upper:]' '[:lower:]' | sed -e 's/\//_/g')
 COMPILE_ARCH=$(shell uname -m | sed -e 's/i.86/x86/' | sed -e 's/^arm.*/arm/')
@@ -121,11 +119,6 @@ endif
 ifndef GENERATE_DEPENDENCIES
 GENERATE_DEPENDENCIES=1
 endif
-
-ifndef USE_CCACHE
-USE_CCACHE=0
-endif
-export USE_CCACHE
 
 ifndef USE_LOCAL_HEADERS
 USE_LOCAL_HEADERS=1
@@ -260,12 +253,6 @@ endif
 ifeq ($(GENERATE_DEPENDENCIES),1)
   BASE_CFLAGS += -MMD
 endif
-
-
-ARCHEXT=
-
-CLIENT_EXTRA_FILES=
-
 
 #############################################################################
 # SETUP AND BUILD -- MINGW32
@@ -487,8 +474,6 @@ TARGET_SERVER = $(DNAME)$(ARCHEXT)$(BINEXT)
 
 STRINGIFY = $(B)/rend2/stringify$(BINEXT)
 
-TARGETS =
-
 ifneq ($(BUILD_SERVER),0)
   TARGETS += $(B)/$(TARGET_SERVER)
 endif
@@ -500,10 +485,6 @@ ifneq ($(BUILD_CLIENT),0)
     TARGETS += $(B)/$(TARGET_REND2)
     TARGETS += $(B)/$(TARGET_RENDV)
   endif
-endif
-
-ifeq ($(USE_CCACHE),1)
-  CC := ccache $(CC)
 endif
 
 ifneq ($(USE_RENDERER_DLOPEN),0)
