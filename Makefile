@@ -39,13 +39,8 @@ DNAME            = quake3e.ded
 
 RENDERER_PREFIX  = $(CNAME)
 
-ifeq ($(V),1)
-echo_cmd=@:
-Q=
-else
 echo_cmd=@echo
 Q=@
-endif
 
 #############################################################################
 #
@@ -175,17 +170,8 @@ MKDIR=mkdir
 ifneq ($(call bin_path, $(PKG_CONFIG)),)
   SDL_INCLUDE ?= $(shell $(PKG_CONFIG) --silence-errors --cflags-only-I sdl2)
   SDL_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs sdl2)
-  X11_INCLUDE ?= $(shell $(PKG_CONFIG) --silence-errors --cflags-only-I x11)
-  X11_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs x11)
 endif
 
-# supply some reasonable defaults for SDL/X11?
-ifeq ($(X11_INCLUDE),)
-X11_INCLUDE = -I/usr/X11R6/include
-endif
-ifeq ($(X11_LIBS),)
-X11_LIBS = -lX11
-endif
 ifeq ($(SDL_LIBS),)
 SDL_LIBS = -lSDL2
 endif
