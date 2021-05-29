@@ -30,6 +30,16 @@ cc_library(
     hdrs = ["command_line.h"],
 )
 
+cc_test(
+    name = "time_test",
+    srcs = [
+        "time_test.cpp",
+    ],
+    deps = [
+        ":time",
+    ],
+)
+
 cc_library(
     name = "time",
     srcs = ["time.cpp"],
@@ -51,4 +61,5 @@ cc_library(
 cc_library(
     name = "fpu",
     srcs = ["fpu.cpp"],
+    hdrs = ["fpu.h"],
 )

@@ -1,4 +1,4 @@
-void Sys_ConfigureFPU(void) // bk001213 - divide by zero
+void Sys_ConfigureFPU() // bk001213 - divide by zero
 {
 #ifdef __linux__
 #ifdef __i386
