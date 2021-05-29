@@ -1,0 +1,1 @@
+  char *ReadCommandLine(const int argc, const char *argv[]);

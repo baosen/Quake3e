@@ -2,21 +2,42 @@ cc_binary(
     name = "main",
     srcs = ["main.cpp"],
     deps = [
+        ":init",
         ":game",
-        ":time",
-        ":fpu",
     ],
+)
+
+cc_library(
+    name = "init",
+    srcs = ["init.cpp"],
+    hdrs = ["init.h"],
+    deps = [
+        ":command_line",
+        ":time",
+    ],
+)
+
+cc_library(
+    name = "command_line",
+    srcs = ["command_line.cpp"],
+    hdrs = ["command_line.h"],
 )
 
 cc_library(
     name = "time",
     srcs = ["time.cpp"],
+    hdrs = [
+        "time.h",
+    ]
 )
 
 cc_library(
     name = "game",
     srcs = ["game.cpp"],
     hdrs = ["game.h"],
+    deps = [
+        ":fpu",
+    ]
 )
 
 cc_library(

@@ -1,0 +1,1 @@
+  void InitializeGame(const int argc, const char *argv[]);
