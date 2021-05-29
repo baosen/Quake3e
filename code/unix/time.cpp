@@ -15,7 +15,7 @@ static unsigned long sys_timeBase = 0;
 int Sys_Milliseconds(void) {
   struct timeval tp;
   gettimeofday(&tp, nullptr);
-  if (!sys_timeBase) {
+  if (!sys_timeBase) { // set time base on first call.
     sys_timeBase = tp.tv_sec;
     return tp.tv_usec / 1000;
   }
