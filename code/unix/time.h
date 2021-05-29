@@ -1,1 +1,2 @@
-int Sys_Milliseconds(void);
+void InitTimeBase();
+int Sys_Milliseconds();
