@@ -745,41 +745,10 @@ void Sys_Print( const char *msg )
 	}
 }
 
-
 void QDECL Sys_SetStatus( const char *format, ... )
 {
 	return;
 }
-
-
-void Sys_ConfigureFPU( void )  // bk001213 - divide by zero
-{
-#ifdef __linux__
-#ifdef __i386
-#ifdef __GLIBC__
-#ifndef NDEBUG
-	// bk0101022 - enable FPE's in debug mode
-	static int fpu_word = _FPU_DEFAULT & ~(_FPU_MASK_ZM | _FPU_MASK_IM);
-	int current = 0;
-	_FPU_GETCW( current );
-	if ( current!=fpu_word)
-	{
-#if 0
-		Com_Printf("FPU Control 0x%x (was 0x%x)\n", fpu_word, current );
-		_FPU_SETCW( fpu_word );
-		_FPU_GETCW( current );
-		assert(fpu_word==current);
-#endif
-	}
-#else // NDEBUG
-	static int fpu_word = _FPU_DEFAULT;
-	_FPU_SETCW( fpu_word );
-#endif // NDEBUG
-#endif // __GLIBC__
-#endif // __i386
-#endif // __linux
-}
-
 
 void Sys_PrintBinVersion( const char* name )
 {
@@ -854,95 +823,5 @@ int Sys_ParseArgs( int argc, const char* argv[] )
 		}
 	}
 
-	return 0;
-}
-
-
-int main( int argc, const char* argv[] )
-{
-	char con_title[ MAX_CVAR_VALUE_STRING ];
-	int xpos, ypos;
-	//qboolean useXYpos;
-	char  *cmdline;
-	int   len, i;
-	tty_err	err;
-
-#ifdef __APPLE__
-	// This is passed if we are launched by double-clicking
-	if ( argc >= 2 && Q_strncmp( argv[1], "-psn", 4 ) == 0 )
-		argc = 1;
-#endif
-
-	if ( Sys_ParseArgs( argc, argv ) ) // added this for support
-		return 0;
-
-	// merge the command line, this is kinda silly
-	for ( len = 1, i = 1; i < argc; i++ )
-		len += strlen( argv[i] ) + 1;
-
-	cmdline = malloc( len );
-	*cmdline = '\0';
-	for ( i = 1; i < argc; i++ )
-	{
-		if ( i > 1 )
-			strcat( cmdline, " " );
-		strcat( cmdline, argv[i] );
-	}
-
-	/*useXYpos = */ Com_EarlyParseCmdLine( cmdline, con_title, sizeof( con_title ), &xpos, &ypos );
-
-	// bk000306 - clear queues
-//	memset( &eventQue[0], 0, sizeof( eventQue ) );
-//	memset( &sys_packetReceived[0], 0, sizeof( sys_packetReceived ) );
-
-	// get the initial time base
-	Sys_Milliseconds();
-
-	Com_Init( cmdline );
-	NET_Init();
-
-	Com_Printf( "Working directory: %s\n", Sys_Pwd() );
-
-	// Sys_ConsoleInputInit() might be called in signal handler
-	// so modify/init any cvars here
-	ttycon = Cvar_Get( "ttycon", "1", 0 );
-	ttycon_ansicolor = Cvar_Get( "ttycon_ansicolor", "0", CVAR_ARCHIVE );
-
-	err = Sys_ConsoleInputInit();
-	if ( err == TTY_ENABLED )
-	{
-		Com_Printf( "Started tty console (use +set ttycon 0 to disable)\n" );
-	}
-	else
-	{
-		if ( err == TTY_ERROR )
-		{
-			Com_Printf( "stdin is not a tty, tty console mode failed\n" );
-			Cvar_Set( "ttycon", "0" );
-		}
-	}
-
-#ifdef DEDICATED
-	// init here for dedicated, as we don't have GLimp_Init
-	InitSig();
-#endif
-
-	while (1)
-	{
-#ifdef __linux__
-		Sys_ConfigureFPU();
-#endif
-
-#ifdef DEDICATED
-		// run the game
-		Com_Frame( qfalse );
-#else
-		// check for other input devices
-		IN_Frame();
-		// run the game
-		Com_Frame( CL_NoDelay() );
-#endif
-	}
-	// never gets here
 	return 0;
 }

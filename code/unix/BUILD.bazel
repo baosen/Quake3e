@@ -1,0 +1,25 @@
+cc_binary(
+    name = "main",
+    srcs = ["main.cpp"],
+    deps = [
+        ":game",
+        ":time",
+        ":fpu",
+    ],
+)
+
+cc_library(
+    name = "time",
+    srcs = ["time.cpp"],
+)
+
+cc_library(
+    name = "game",
+    srcs = ["game.cpp"],
+    hdrs = ["game.h"],
+)
+
+cc_library(
+    name = "fpu",
+    srcs = ["fpu.cpp"],
+)
