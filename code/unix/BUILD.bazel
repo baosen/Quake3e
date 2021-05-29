@@ -1,8 +1,15 @@
+cc_test(
+    name = "game_test",
+    srcs = ["game_test.cpp"],
+    deps = [
+        ":game",
+    ],
+)
+
 cc_binary(
     name = "main",
     srcs = ["main.cpp"],
     deps = [
-        ":init",
         ":game",
     ],
 )
@@ -36,6 +43,7 @@ cc_library(
     srcs = ["game.cpp"],
     hdrs = ["game.h"],
     deps = [
+        ":init",
         ":fpu",
     ]
 )
