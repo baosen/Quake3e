@@ -8,6 +8,7 @@ cc_library(
     ],
     deps = [
         ":sdl_glimp",
+        "//code/qcommon:keys",
     ],
     copts = [
         "-I/usr/include/SDL2",
