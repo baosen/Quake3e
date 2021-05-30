@@ -68,11 +68,6 @@ static qboolean mouse_focus;
 
 #define CTRL(a) ((a)-'a'+1)
 
-/*
-===============
-IN_PrintKey
-===============
-*/
 static void IN_PrintKey( const SDL_Keysym *keysym, keyNum_t key, qboolean down )
 {
 	if( down )
@@ -105,8 +100,6 @@ static void IN_PrintKey( const SDL_Keysym *keysym, keyNum_t key, qboolean down )
 
 /*
 ===============
-IN_IsConsoleKey
-
 TODO: If the SDL_Scancode situation improves, use it instead of
       both of these methods
 ===============
@@ -196,12 +189,6 @@ static qboolean IN_IsConsoleKey( keyNum_t key, int character )
 	return qfalse;
 }
 
-
-/*
-===============
-IN_TranslateSDLToQ3Key
-===============
-*/
 static keyNum_t IN_TranslateSDLToQ3Key( SDL_Keysym *keysym, qboolean down )
 {
 	keyNum_t key = 0;
@@ -344,12 +331,6 @@ static keyNum_t IN_TranslateSDLToQ3Key( SDL_Keysym *keysym, qboolean down )
 	return key;
 }
 
-
-/*
-===============
-IN_GobbleMotionEvents
-===============
-*/
 static void IN_GobbleMouseEvents( void )
 {
 	SDL_Event dummy[ 1 ];
@@ -365,14 +346,6 @@ static void IN_GobbleMouseEvents( void )
 		Com_Printf( "%s failed: %s\n", __func__, SDL_GetError() );
 }
 
-
-//#define DEBUG_EVENTS
-
-/*
-===============
-IN_ActivateMouse
-===============
-*/
 static void IN_ActivateMouse( void )
 {
 	if ( !mouseAvailable )
@@ -415,12 +388,6 @@ static void IN_ActivateMouse( void )
 	mouseActive = qtrue;
 }
 
-
-/*
-===============
-IN_DeactivateMouse
-===============
-*/
 static void IN_DeactivateMouse( void )
 {
 	if ( !mouseAvailable )
@@ -455,7 +422,6 @@ static void IN_DeactivateMouse( void )
 		SDL_ShowCursor( SDL_TRUE );
 }
 
-
 #ifdef USE_JOYSTICK
 // We translate axes movement into keypresses
 static const int joy_keys[16] = {
@@ -482,7 +448,6 @@ static const int hat_keys[16] = {
 	K_JOY19, K_JOY20
 };
 
-
 struct
 {
 	qboolean buttons[SDL_CONTROLLER_BUTTON_MAX + 1]; // +1 because old max was 16, current SDL_CONTROLLER_BUTTON_MAX is 15
@@ -491,12 +456,6 @@ struct
 	unsigned int oldhats;
 } stick_state;
 
-
-/*
-===============
-IN_InitJoystick
-===============
-*/
 static void IN_InitJoystick( void )
 {
 	int i = 0;
@@ -586,12 +545,6 @@ static void IN_InitJoystick( void )
 	SDL_GameControllerEventState(SDL_QUERY);
 }
 
-
-/*
-===============
-IN_ShutdownJoystick
-===============
-*/
 static void IN_ShutdownJoystick( void )
 {
 	if ( !SDL_WasInit( SDL_INIT_GAMECONTROLLER ) )
@@ -685,12 +638,6 @@ static qboolean KeyToAxisAndSign(int keynum, int *outAxis, int *outSign)
 	return *outSign != 0;
 }
 
-
-/*
-===============
-IN_GamepadMove
-===============
-*/
 static void IN_GamepadMove( void )
 {
 	int i;
@@ -814,12 +761,6 @@ static void IN_GamepadMove( void )
 	}
 }
 
-
-/*
-===============
-IN_JoyMove
-===============
-*/
 static void IN_JoyMove( void )
 {
 	unsigned int axes = 0;
@@ -1028,8 +969,6 @@ static void IN_JoyMove( void )
 }
 #endif  // USE_JOYSTICK
 
-
-
 #ifdef DEBUG_EVENTS
 static const char *eventName( SDL_WindowEventID event )
 {
@@ -1061,13 +1000,6 @@ static const char *eventName( SDL_WindowEventID event )
 }
 #endif
 
-
-/*
-===============
-HandleEvents
-===============
-*/
-//static void IN_ProcessEvents( void )
 void HandleEvents( void )
 {
 	SDL_Event e;
@@ -1248,14 +1180,7 @@ void HandleEvents( void )
 	}
 }
 
-
-/*
-===============
-IN_Minimize
-
-Minimize the game so that user is back at the desktop
-===============
-*/
+// Minimize the game so that user is back at the desktop.
 static void IN_Minimize( void )
 {
 	SDL_MinimizeWindow( SDL_window );
@@ -1284,12 +1209,6 @@ void IN_Frame()
 	IN_ActivateMouse();
 }
 
-
-/*
-===============
-IN_Restart
-===============
-*/
 static void IN_Restart( void )
 {
 #ifdef USE_JOYSTICK
@@ -1299,12 +1218,6 @@ static void IN_Restart( void )
 	IN_Init();
 }
 
-
-/*
-===============
-IN_Init
-===============
-*/
 void IN_Init( void )
 {
 	if ( !SDL_WasInit( SDL_INIT_VIDEO ) )
@@ -1363,12 +1276,6 @@ void IN_Init( void )
 	Com_DPrintf( "------------------------------------\n" );
 }
 
-
-/*
-===============
-IN_Shutdown
-===============
-*/
 void IN_Shutdown( void )
 {
 	SDL_StopTextInput();
