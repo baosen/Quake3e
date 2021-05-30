@@ -1,0 +1,7 @@
+cc_library(
+    name = "sdl_input",
+    srcs = ["sdl_input.c"],
+    copts = [
+        "-I/usr/include/SDL2",
+    ]
+)
