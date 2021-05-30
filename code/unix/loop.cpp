@@ -1,6 +1,6 @@
 #include "fpu.h"
 
-void IN_Frame() {}
+extern "C" void IN_Frame();
 void Com_Frame(const bool noDelay) {}
 bool CL_NoDelay() { return false; }
 

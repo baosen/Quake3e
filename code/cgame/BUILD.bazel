@@ -1,0 +1,7 @@
+filegroup(
+    name = "cgame",
+    srcs = [
+        "cg_public.h",
+    ],
+    visibility = ["//visibility:public"],
+)

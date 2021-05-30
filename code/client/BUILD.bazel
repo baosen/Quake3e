@@ -1,0 +1,10 @@
+filegroup(
+    name = "client",
+    srcs = [
+        "client.h",
+        "keys.h",
+        "keycodes.h",
+        "snd_public.h",
+    ],
+    visibility = ["//visibility:public"],
+)

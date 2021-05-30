@@ -1,0 +1,7 @@
+filegroup(
+    name = "game",
+    srcs = [
+        "bg_public.h",
+    ],
+    visibility = ["//visibility:public"],
+)

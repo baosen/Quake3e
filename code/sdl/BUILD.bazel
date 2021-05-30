@@ -1,7 +1,18 @@
 cc_library(
     name = "sdl_input",
-    srcs = ["sdl_input.c"],
+    srcs = [
+        "sdl_input.c",
+    ],
+    hdrs = [
+        "sdl_glw.h",
+        "//code/client",
+        "//code/cgame",
+        "//code/game",
+        "//code/qcommon",
+        "//code/ui",
+    ],
     copts = [
         "-I/usr/include/SDL2",
-    ]
+    ],
+    visibility = ["//visibility:public"],
 )

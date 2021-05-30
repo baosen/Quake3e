@@ -1,0 +1,8 @@
+filegroup(
+    name = "renderercommon",
+    srcs = [
+        "tr_public.h",
+        "tr_types.h",
+    ],
+    visibility = ["//visibility:public"],
+)

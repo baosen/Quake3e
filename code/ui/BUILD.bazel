@@ -1,0 +1,7 @@
+filegroup(
+    name = "ui",
+    srcs = [
+        "ui_public.h",
+    ],
+    visibility = ["//visibility:public"],
+)

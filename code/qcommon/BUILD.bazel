@@ -1,0 +1,14 @@
+filegroup(
+    name = "qcommon",
+    srcs = [
+        "qcommon.h",
+        "q_shared.h",
+        "q_platform.h",
+        "qfiles.h",
+        "vm_local.h",
+        "surfaceflags.h",
+        "cm_public.h",
+        "//code/renderercommon",
+    ],
+    visibility = ["//visibility:public"],
+)

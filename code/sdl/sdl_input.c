@@ -1261,13 +1261,7 @@ static void IN_Minimize( void )
 	SDL_MinimizeWindow( SDL_window );
 }
 
-
-/*
-===============
-IN_Frame
-===============
-*/
-void IN_Frame( void )
+void IN_Frame()
 {
 #ifdef USE_JOYSTICK
 	IN_JoyMove();
@@ -1288,12 +1282,6 @@ void IN_Frame( void )
 	}
 
 	IN_ActivateMouse();
-
-	//IN_ProcessEvents();
-	//HandleEvents();
-
-	// Set event time for next frame to earliest possible time an event could happen
-	//in_eventTime = Sys_Milliseconds();
 }
 
 
