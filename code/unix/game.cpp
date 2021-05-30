@@ -1,23 +1,7 @@
 #include "init.h"
-
-void IN_Frame() {}
-void Com_Frame(const bool noDelay) {}
-bool CL_NoDelay() { return false; }
+#include "loop.h"
 
 void RunGame(const int argc, const char *argv[]) {
   InitializeGame(argc, argv);
-  extern void DoGameLoop();
   DoGameLoop(); // hidden temporal coupling with function above.
-}
-
-#include "fpu.h"
-
-void DoGameLoop() {
-  for (;;) {
-#ifdef __linux__
-    Sys_ConfigureFPU();
-#endif
-    IN_Frame();
-    Com_Frame(CL_NoDelay());
-  }
 }

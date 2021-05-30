@@ -1,3 +1,11 @@
+cc_binary(
+    name = "main",
+    srcs = ["main.cpp"],
+    deps = [
+        ":game",
+    ],
+)
+
 cc_test(
     name = "game_test",
     srcs = ["game_test.cpp"],
@@ -6,12 +14,14 @@ cc_test(
     ],
 )
 
-cc_binary(
-    name = "main",
-    srcs = ["main.cpp"],
+cc_library(
+    name = "game",
+    srcs = ["game.cpp"],
+    hdrs = ["game.h"],
     deps = [
-        ":game",
-    ],
+        ":loop",
+        ":init",
+    ]
 )
 
 cc_library(
@@ -49,11 +59,10 @@ cc_library(
 )
 
 cc_library(
-    name = "game",
-    srcs = ["game.cpp"],
-    hdrs = ["game.h"],
+    name = "loop",
+    srcs = ["loop.cpp"],
+    hdrs = ["loop.h"],
     deps = [
-        ":init",
         ":fpu",
     ]
 )
