@@ -27,6 +27,9 @@ cc_library(
         "sdl_icon.h",
         ":common",
     ],
+    deps = [
+        "//code/qcommon:common",
+    ],
     copts = [
         "-I/usr/include/SDL2",
     ],

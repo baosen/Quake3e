@@ -12,3 +12,15 @@ filegroup(
     ],
     visibility = ["//visibility:public"],
 )
+
+cc_library(
+    name = "common",
+    srcs = [
+        "common.c",
+    ],
+    hdrs = [
+        ":qcommon",
+        "//code/client",
+    ],
+    visibility = ["//visibility:public"],
+)
