@@ -13,14 +13,32 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
+filegroup(
+    name = "internal_common",
+    srcs = [
+        ":qcommon",
+        "//code/client",
+    ],
+)
+
 cc_library(
     name = "common",
     srcs = [
         "common.c",
     ],
     hdrs = [
-        ":qcommon",
-        "//code/client",
+        ":internal_common",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "keys",
+    srcs = [
+        "keys.c",
+    ],
+    hdrs = [
+        ":internal_common",
     ],
     visibility = ["//visibility:public"],
 )

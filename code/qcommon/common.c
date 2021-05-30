@@ -499,13 +499,7 @@ void Com_ParseCommandLine( char *commandLine ) {
 
 char cl_title[ MAX_CVAR_VALUE_STRING ] = CLIENT_WINDOW_TITLE;
 
-/*
-===================
-Com_EarlyParseCmdLine
-
-returns qtrue if both vid_xpos and vid_ypos was set
-===================
-*/
+// Returns qtrue if both vid_xpos and vid_ypos was set.
 qboolean Com_EarlyParseCmdLine( char *commandLine, char *con_title, int title_size, int *vid_xpos, int *vid_ypos )
 {
 	int		flags = 0;
