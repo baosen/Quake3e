@@ -4,6 +4,43 @@ cc_library(
         "sdl_input.c",
     ],
     hdrs = [
+        ":common",
+    ],
+    deps = [
+        ":sdl_glimp",
+    ],
+    copts = [
+        "-I/usr/include/SDL2",
+    ],
+    linkopts= [
+        "-lSDL2",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "sdl_glimp",
+    srcs = [
+        "sdl_glimp.c",
+    ],
+    hdrs = [
+        "sdl_icon.h",
+        ":common",
+    ],
+    copts = [
+        "-I/usr/include/SDL2",
+    ],
+    linkopts = [
+        "-lSDL2",
+    ],
+    visibility = [
+        "//visibility:public",
+    ],
+)
+
+filegroup(
+    name = "common",
+    srcs = [
         "sdl_glw.h",
         "//code/client",
         "//code/cgame",
@@ -11,8 +48,4 @@ cc_library(
         "//code/qcommon",
         "//code/ui",
     ],
-    copts = [
-        "-I/usr/include/SDL2",
-    ],
-    visibility = ["//visibility:public"],
 )
