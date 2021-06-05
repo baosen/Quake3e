@@ -56,11 +56,6 @@ static PFN_vkGetInstanceProcAddr qvkGetInstanceProcAddr;
 cvar_t *r_stereoEnabled;
 cvar_t *in_nograb;
 
-/*
-===============
-GLimp_Shutdown
-===============
-*/
 void GLimp_Shutdown( qboolean unloadDLL )
 {
 	IN_Shutdown();
@@ -75,29 +70,15 @@ void GLimp_Shutdown( qboolean unloadDLL )
 		SDL_QuitSubSystem( SDL_INIT_VIDEO );
 }
 
-
-/*
-===============
-GLimp_Minimize
-
-Minimize the game so that user is back at the desktop
-===============
-*/
+// Minimize the game so that user is back at the desktop.
 void GLimp_Minimize( void )
 {
 	SDL_MinimizeWindow( SDL_window );
 }
 
-
-/*
-===============
-GLimp_LogComment
-===============
-*/
 void GLimp_LogComment( char *comment )
 {
 }
-
 
 static int FindNearestDisplay( int *x, int *y, int w, int h )
 {
@@ -178,12 +159,6 @@ static SDL_HitTestResult SDL_HitTestFunc( SDL_Window *win, const SDL_Point *area
 	return SDL_HITTEST_NORMAL;
 }
 
-
-/*
-===============
-GLimp_SetMode
-===============
-*/
 static int GLW_SetMode( int mode, const char *modeFS, qboolean fullscreen, qboolean vulkan )
 {
 	glconfig_t *config = glw_state.config;
@@ -530,12 +505,6 @@ static int GLW_SetMode( int mode, const char *modeFS, qboolean fullscreen, qbool
 	return RSERR_OK;
 }
 
-
-/*
-===============
-GLimp_StartDriverAndSetMode
-===============
-*/
 static rserr_t GLimp_StartDriverAndSetMode( int mode, const char *modeFS, qboolean fullscreen, qboolean vulkan )
 {
 	rserr_t err;
@@ -580,15 +549,7 @@ static rserr_t GLimp_StartDriverAndSetMode( int mode, const char *modeFS, qboole
 	return RSERR_OK;
 }
 
-
-/*
-===============
-GLimp_Init
-
-This routine is responsible for initializing the OS specific portions
-of OpenGL
-===============
-*/
+// This routine is responsible for initializing the OS specific portions of OpenGL.
 void GLimp_Init( glconfig_t *config )
 {
 	rserr_t err;
@@ -642,14 +603,7 @@ void GLimp_Init( glconfig_t *config )
 	IN_Init();
 }
 
-
-/*
-===============
-GLimp_EndFrame
-
-Responsible for doing a swapbuffers
-===============
-*/
+// Responsible for doing a swapbuffers.
 void GLimp_EndFrame( void )
 {
 	// don't flip if drawing to front buffer
@@ -659,29 +613,14 @@ void GLimp_EndFrame( void )
 	}
 }
 
-
-/*
-===============
-GL_GetProcAddress
-
-Used by opengl renderers to resolve all qgl* function pointers
-===============
-*/
+// Used by opengl renderers to resolve all qgl* function pointers.
 void *GL_GetProcAddress( const char *symbol )
 {
 	return SDL_GL_GetProcAddress( symbol );
 }
 
-
 #ifdef USE_VULKAN_API
-/*
-===============
-VKimp_Init
-
-This routine is responsible for initializing the OS specific portions
-of Vulkan
-===============
-*/
+// This routine is responsible for initializing the OS specific portions of Vulkan.
 void VKimp_Init( glconfig_t *config )
 {
 	rserr_t err;
@@ -741,23 +680,11 @@ void VKimp_Init( glconfig_t *config )
 	IN_Init();
 }
 
-
-/*
-===============
-VK_GetInstanceProcAddr
-===============
-*/
 void *VK_GetInstanceProcAddr( VkInstance instance, const char *name )
 {
 	return qvkGetInstanceProcAddr( instance, name );
 }
 
-
-/*
-===============
-VK_CreateSurface
-===============
-*/
 qboolean VK_CreateSurface( VkInstance instance, VkSurfaceKHR *surface )
 {
 	if ( SDL_Vulkan_CreateSurface( SDL_window, instance, surface ) == SDL_TRUE )
@@ -766,12 +693,6 @@ qboolean VK_CreateSurface( VkInstance instance, VkSurfaceKHR *surface )
 		return qfalse;
 }
 
-
-/*
-===============
-VKimp_Shutdown
-===============
-*/
 void VKimp_Shutdown( qboolean unloadDLL )
 {
 	IN_Shutdown();
@@ -787,12 +708,6 @@ void VKimp_Shutdown( qboolean unloadDLL )
 }
 #endif // USE_VULKAN_API
 
-
-/*
-===============
-Sys_GetClipboardData
-===============
-*/
 char *Sys_GetClipboardData( void )
 {
 #ifdef DEDICATED
@@ -817,12 +732,6 @@ char *Sys_GetClipboardData( void )
 #endif
 }
 
-
-/*
-===============
-Sys_SetClipboardBitmap
-===============
-*/
 void Sys_SetClipboardBitmap( const byte *bitmap, int length )
 {
 #ifdef _WIN32
