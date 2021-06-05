@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <winsock.h>
 #endif
 
-#include "../client/keys.h"
+#include "code/client/keys.h"
 
 const int demo_protocols[] = { 66, 67, PROTOCOL_VERSION, NEW_PROTOCOL_VERSION, 0 };
 

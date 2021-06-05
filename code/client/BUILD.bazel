@@ -1,10 +1,11 @@
-filegroup(
+cc_library(
     name = "client",
-    srcs = [
+    hdrs = [
         "client.h",
         "keys.h",
         "keycodes.h",
         "snd_public.h",
+        "snd_local.h",
     ],
     visibility = ["//visibility:public"],
 )

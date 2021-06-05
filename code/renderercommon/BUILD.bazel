@@ -1,6 +1,12 @@
 filegroup(
     name = "renderercommon",
     srcs = [
+        "vulkan/vk_platform.h",
+        "vulkan/vulkan_core.h",
+        "vulkan/vulkan_win32.h",
+        "vulkan/vulkan_xlib_xrandr.h",
+        "vulkan/vulkan_xlib.h",
+        "vulkan/vulkan.h",
         "tr_public.h",
         "tr_types.h",
     ],

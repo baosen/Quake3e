@@ -17,7 +17,6 @@ filegroup(
     name = "internal_common",
     srcs = [
         ":qcommon",
-        "//code/client",
     ],
 )
 
@@ -29,6 +28,9 @@ cc_library(
     hdrs = [
         ":internal_common",
     ],
+    deps = [
+        "//code/client",
+    ],
     visibility = ["//visibility:public"],
 )
 
@@ -39,6 +41,9 @@ cc_library(
     ],
     hdrs = [
         ":internal_common",
+    ],
+    deps = [
+        "//code/client",
     ],
     visibility = ["//visibility:public"],
 )

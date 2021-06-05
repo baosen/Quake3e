@@ -1,14 +1,19 @@
 cc_library(
-    name = "sdl_input",
+    name = "sdl",
     srcs = [
         "sdl_input.c",
+        "sdl_gamma.c",
+        "sdl_glimp.c",
+        "sdl_snd.c",
     ],
     hdrs = [
+        "sdl_icon.h",
         ":common",
     ],
     deps = [
-        ":sdl_glimp",
+        "//code/qcommon:common",
         "//code/qcommon:keys",
+        "//code/client",
     ],
     copts = [
         "-I/usr/include/SDL2",
@@ -17,29 +22,6 @@ cc_library(
         "-lSDL2",
     ],
     visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "sdl_glimp",
-    srcs = [
-        "sdl_glimp.c",
-    ],
-    hdrs = [
-        "sdl_icon.h",
-        ":common",
-    ],
-    deps = [
-        "//code/qcommon:common",
-    ],
-    copts = [
-        "-I/usr/include/SDL2",
-    ],
-    linkopts = [
-        "-lSDL2",
-    ],
-    visibility = [
-        "//visibility:public",
-    ],
 )
 
 filegroup(
