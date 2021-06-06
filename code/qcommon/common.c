@@ -3951,12 +3951,6 @@ static int Com_TimeVal( int minMsec )
 	return timeVal;
 }
 
-
-/*
-=================
-Com_Frame
-=================
-*/
 void Com_Frame( qboolean noDelay ) {
 
 #ifndef DEDICATED
@@ -4191,12 +4185,6 @@ void Com_Frame( qboolean noDelay ) {
 	com_frameNumber++;
 }
 
-
-/*
-=================
-Com_Shutdown
-=================
-*/
 static void Com_Shutdown( void ) {
 	if ( logfile != FS_INVALID_HANDLE ) {
 		FS_FCloseFile( logfile );
