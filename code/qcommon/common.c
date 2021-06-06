@@ -3538,13 +3538,7 @@ void Sys_SnapVector( float *vector )
 
 #endif // clang/gcc/mingw
 
-
-/*
-=================
-Com_Init
-=================
-*/
-void Com_Init( char *commandLine ) {
+void Com_Init( const char *commandLine ) {
 	const char *s;
 	int	qport;
 
