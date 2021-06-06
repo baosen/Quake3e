@@ -23,19 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "code/qcommon/qcommon.h"
 #include <signal.h>
 
-/*
-#ifdef _DEBUG
-#include <execinfo.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#endif
-
-#ifndef DEDICATED
-#include "code/renderer/tr_local.h"
-#endif
-*/
-
 static qboolean signalcaught = qfalse;
 
 extern void Sys_Exit( int code );

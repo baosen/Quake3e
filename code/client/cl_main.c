@@ -134,7 +134,10 @@ static void CL_ServerStatus_f( void );
 static void CL_ServerStatusResponse( const netadr_t *from, msg_t *msg );
 static void CL_ServerInfoPacket( const netadr_t *from, msg_t *msg );
 
+#ifdef USE_CURL
 static void CL_Download_f( void );
+#endif
+
 static void CL_LocalServers_f( void );
 static void CL_GlobalServers_f( void );
 static void CL_Ping_f( void );
@@ -1980,16 +1983,9 @@ static void CL_CompleteCallvote( char *args, int argNum )
 	}
 }
 
-
 //====================================================================
 
-/*
-=================
-CL_DownloadsComplete
-
-Called when all downloading has been completed
-=================
-*/
+// Called when all downloading has been completed.
 static void CL_DownloadsComplete( void ) {
 
 #ifdef USE_CURL
@@ -2363,12 +2359,6 @@ static void CL_CheckForResend( void ) {
 	}
 }
 
-
-/*
-===================
-CL_MotdPacket
-===================
-*/
 static void CL_MotdPacket( const netadr_t *from ) {
 	const char *challenge;
 	const char *info;
@@ -2392,12 +2382,6 @@ static void CL_MotdPacket( const netadr_t *from ) {
 	Cvar_Set( "cl_motdString", challenge );
 }
 
-
-/*
-===================
-CL_InitServerInfo
-===================
-*/
 static void CL_InitServerInfo( serverInfo_t *server, const netadr_t *address ) {
 	server->adr = *address;
 	server->clients = 0;
@@ -2485,12 +2469,6 @@ static hash_chain_t *hash_find( const netadr_t *addr )
 	return NULL;
 }
 
-
-/*
-===================
-CL_ServersResponsePacket
-===================
-*/
 static void CL_ServersResponsePacket( const netadr_t* from, msg_t *msg, qboolean extended ) {
 	int				i, count, total;
 	netadr_t addresses[MAX_SERVERSPERPACKET];
@@ -4946,12 +4924,6 @@ qboolean CL_Download( const char *cmd, const char *pakname, qboolean autoDownloa
 	return Com_DL_Begin( &download, pakname, cl_dlURL->string, autoDownload );
 }
 
-
-/*
-==================
-CL_Download_f
-==================
-*/
 static void CL_Download_f( void )
 {
 	if ( Cmd_Argc() < 2 || *Cmd_Argv( 1 ) == '\0' )
@@ -4968,4 +4940,5 @@ static void CL_Download_f( void )
 
 	CL_Download( Cmd_Argv( 0 ), Cmd_Argv( 1 ), qfalse );
 }
+
 #endif // USE_CURL

@@ -1,6 +1,6 @@
 #include <sys/time.h>
 
-static timeval GetTimeOfDay();
+static timeval GetCurrentTimeOfDay();
 
 /* base time in seconds, that's our origin
    timeval:tv_sec is an int:
@@ -14,14 +14,11 @@ static unsigned long sys_timeBase = 0;
    although timeval:tv_usec is an int, I'm not sure wether it is actually used
    as an unsigned int (which would affect the wrap period) */
 
-void InitTimeBase() {
-  auto tp = GetTimeOfDay();
-  sys_timeBase = tp.tv_sec;
-}
+void InitTimeBase() { sys_timeBase = GetCurrentTimeOfDay().tv_sec; }
 
 // Returns the time elapsed in milliseconds.
 extern "C" int Sys_Milliseconds() {
-  auto tp = GetTimeOfDay();
+  auto tp = GetCurrentTimeOfDay();
   if (!sys_timeBase) { // set time base on first call.
     sys_timeBase = tp.tv_sec;
     return tp.tv_usec / 1000;
@@ -29,7 +26,7 @@ extern "C" int Sys_Milliseconds() {
   return (tp.tv_sec - sys_timeBase) * 1000 + tp.tv_usec / 1000;
 }
 
-static timeval GetTimeOfDay() {
+static timeval GetCurrentTimeOfDay() {
   timeval tp;
   gettimeofday(&tp, nullptr);
   return tp;
