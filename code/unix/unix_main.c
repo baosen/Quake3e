@@ -112,11 +112,6 @@ tty_err Sys_ConsoleInputInit( void );
 // bk001207
 #define MEM_THRESHOLD 96*1024*1024
 
-/*
-==================
-Sys_LowPhysicalMemory()
-==================
-*/
 qboolean Sys_LowPhysicalMemory( void )
 {
 	//MEMORYSTATUS stat;
@@ -125,12 +120,8 @@ qboolean Sys_LowPhysicalMemory( void )
 	return qfalse; // bk001207 - FIXME
 }
 
-
 void Sys_BeginProfiling( void )
-{
-
-}
-
+{}
 
 // =============================================================
 // tty console routines
@@ -150,7 +141,6 @@ static void tty_FlushIn( void )
 #endif
 }
 
-
 // do a backspace
 // TTimo NOTE: it seems on some terminals just sending '\b' is not enough
 //   so for now, in any case we send "\b \b" .. yeah well ..
@@ -159,7 +149,6 @@ static void tty_Back( void )
 {
 	write( STDOUT_FILENO, "\b \b", 3 );
 }
-
 
 // clear the display of the line currently edited
 // bring cursor back to beginning of line
@@ -187,7 +176,6 @@ void tty_Hide( void )
 	ttycon_hide++;
 }
 
-
 // show the current line
 // FIXME TTimo need to position the cursor if needed??
 void tty_Show( void )
@@ -209,7 +197,6 @@ void tty_Show( void )
 		}
 	}
 }
-
 
 // never exit without calling this, or your terminal will be left in a pretty bad state
 void Sys_ConsoleInputShutdown( void )
@@ -236,18 +223,11 @@ void Sys_ConsoleInputShutdown( void )
 	ttycon_hide = 0;
 }
 
-/*
-==================
-CON_SigCont
-Reinitialize console input after receiving SIGCONT, as on Linux the terminal seems to lose all
-set attributes if user did CTRL+Z and then does fg again.
-==================
-*/
+// Reinitialize console input after receiving SIGCONT, as on Linux the terminal seems to lose all set attributes if user did CTRL+Z and then does fg again.
 void CON_SigCont( int signum )
 {
 	Sys_ConsoleInputInit();
 }
-
 
 void CON_SigTStp( int signum )
 {
@@ -264,7 +244,6 @@ void CON_SigTStp( int signum )
 
 	kill( getpid(),  SIGTSTP );
 }
-
 
 // =============================================================
 // general sys routines
@@ -288,7 +267,6 @@ void Sys_Exit( int code )
 #endif
 }
 
-
 void Sys_Quit( void )
 {
 #ifndef DEDICATED
@@ -298,13 +276,11 @@ void Sys_Quit( void )
 	Sys_Exit( 0 );
 }
 
-
 void Sys_Init( void )
 {
 	Cvar_Set( "arch", OS_STRING " " ARCH_STRING );
 	//IN_Init();   // rcg08312005 moved into glimp.
 }
-
 
 void Sys_Error( const char *format, ... )
 {
@@ -338,12 +314,10 @@ void Sys_Error( const char *format, ... )
 	Sys_Exit( 1 ); // bk010104 - use single exit point.
 }
 
-
 void floating_point_exception_handler( int whatever )
 {
 	signal( SIGFPE, floating_point_exception_handler );
 }
-
 
 // initialize the console input (tty mode if wanted and possible)
 // warning: might be called from signal handler
@@ -428,7 +402,6 @@ tty_err Sys_ConsoleInputInit( void )
 
 	return TTY_ENABLED;
 }
-
 
 char *Sys_ConsoleInput( void )
 {
@@ -586,14 +559,7 @@ char *Sys_ConsoleInput( void )
 	return NULL;
 }
 
-
-/*
-=================
-Sys_SendKeyEvents
-
-Platform-dependent event handling
-=================
-*/
+// Platform-dependent event handling.
 void Sys_SendKeyEvents( void )
 {
 #ifndef DEDICATED
@@ -601,14 +567,7 @@ void Sys_SendKeyEvents( void )
 #endif
 }
 
-
-/*
-==================
-Sys_Sleep
-
-Block execution for msec or until input is received.
-==================
-*/
+// Block execution for msec or until input is received.
 void Sys_Sleep( int msec ) {
 	struct timeval timeout;
 	fd_set fdset;
@@ -649,7 +608,6 @@ void Sys_Sleep( int msec ) {
 	}
 }
 
-
 static struct Q3ToAnsiColorTable_s
 {
 	const char Q3color;
@@ -665,7 +623,6 @@ static struct Q3ToAnsiColorTable_s
 	{ COLOR_MAGENTA,  "35" },
 	{ COLOR_WHITE,    "0" }
 };
-
 
 void Sys_ANSIColorify( const char *msg, char *buffer, int bufferSize )
 {
@@ -721,7 +678,6 @@ void Sys_ANSIColorify( const char *msg, char *buffer, int bufferSize )
     }
   }
 }
-
 
 void Sys_Print( const char *msg )
 {
