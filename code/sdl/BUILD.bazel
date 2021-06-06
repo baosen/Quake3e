@@ -2,7 +2,6 @@ cc_library(
     name = "sdl",
     srcs = [
         "sdl_input.c",
-        "sdl_gamma.c",
         "sdl_glimp.c",
         "sdl_snd.c",
     ],
@@ -14,6 +13,78 @@ cc_library(
         "//code/qcommon",
         "//code/client",
         "//code/unix:linux_signals",
+    ],
+    copts = [
+        "-I/usr/include/SDL2",
+    ],
+    linkopts= [
+        "-lSDL2",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "sdl_gamma",
+    srcs = [
+        "sdl_gamma.c",
+    ],
+    hdrs = [
+        "sdl_icon.h",
+        "sdl_glw.h",
+    ],
+    deps = [
+        "//code/qcommon",
+        "//code/renderercommon",
+        "//code/client:snd_local",
+        "//code/client:client_header",
+    ],
+    copts = [
+        "-I/usr/include/SDL2",
+    ],
+    linkopts= [
+        "-lSDL2",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "sdl_glimp",
+    srcs = [
+        "sdl_glimp.c",
+    ],
+    hdrs = [
+        "sdl_icon.h",
+        "sdl_glw.h",
+    ],
+    deps = [
+        "//code/qcommon",
+        "//code/renderercommon",
+        "//code/client:snd_local",
+        "//code/client:client_header",
+    ],
+    copts = [
+        "-I/usr/include/SDL2",
+    ],
+    linkopts= [
+        "-lSDL2",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "sdl_snd",
+    srcs = [
+        "sdl_snd.c",
+    ],
+    hdrs = [
+        "sdl_icon.h",
+        "sdl_glw.h",
+    ],
+    deps = [
+        "//code/qcommon",
+        "//code/renderercommon",
+        "//code/client:snd_local",
+        "//code/client:client_header",
     ],
     copts = [
         "-I/usr/include/SDL2",

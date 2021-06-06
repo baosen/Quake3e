@@ -41,12 +41,12 @@ cc_library(
         "surfaceflags.h",
         "unzip.h",
         "vm_local.h",
-        "//code/client:keys",
     ],
     deps = [
         "//code/ui",
         "//code/cgame",
         "//code/game",
+        "//code/client:keys",
     ],
     visibility = ["//visibility:public"],
 )
