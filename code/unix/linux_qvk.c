@@ -19,35 +19,29 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
+
 /*
-** LINUX_QVK.C
-**
-** This file implements the operating system binding of VK to QVK function
-** pointers.  When doing a port of Quake2 you must implement the following
-** two functions:
-**
-** QVK_Init() - loads libraries, assigns function pointers, etc.
-** QVK_Shutdown() - unloads libraries, NULLs function pointers
+* This file implements the operating system binding of VK to QVK function
+* pointers. When doing a port of Quake 3 you must implement the following
+* two functions:
+*
+* QVK_Init(): loads libraries, assigns function pointers, etc.
+* QVK_Shutdown(): unloads libraries, NULLs function pointers.
 */
 
 #include <unistd.h>
 #include <sys/types.h>
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
-#include "../renderercommon/tr_types.h"
+#include "code/qcommon/q_shared.h"
+#include "code/qcommon/qcommon.h"
+#include "code/renderercommon/tr_types.h"
 #include "unix_glw.h"
 #include <dlfcn.h>
 
-
 #define VK_USE_PLATFORM_XLIB_KHR
-//#define VK_USE_PLATFORM_XLIB_XRANDR_EXT
-#include "../renderercommon/vulkan/vulkan.h"
+#include "code/renderercommon/vulkan/vulkan.h"
 
 static PFN_vkGetInstanceProcAddr qvkGetInstanceProcAddr;
 static PFN_vkCreateXlibSurfaceKHR qvkCreateXlibSurfaceKHR;
-// Xlib + XRandR
-//static PFN_vkAcquireXlibDisplayEXT vkAcquireXlibDisplayEXT;
-//static PFN_vkGetRandROutputDisplayEXT PFN_vkGetRandROutputDisplayEXT;
 
 /*
 ** QVK_Shutdown
@@ -70,12 +64,10 @@ void QVK_Shutdown( qboolean unloadDLL )
 	qvkCreateXlibSurfaceKHR = NULL;
 }
 
-
 void *VK_GetInstanceProcAddr( VkInstance instance, const char *name )
 {
 	return qvkGetInstanceProcAddr( instance, name );
 }
-
 
 qboolean VK_CreateSurface( VkInstance instance, VkSurfaceKHR *surface )
 {
@@ -97,7 +89,6 @@ qboolean VK_CreateSurface( VkInstance instance, VkSurfaceKHR *surface )
 		return qfalse;
 }
 
-
 static void *load_vulkan_library( const char *dllname )
 {
 	void *lib;
@@ -116,14 +107,8 @@ static void *load_vulkan_library( const char *dllname )
 	return NULL;
 }
 
-
-/*
-** QVK_Init
-**
-*/
 qboolean QVK_Init( void )
 {
-
 	Com_Printf( "...initializing QVK\n" );
 
 	if ( glw_state.VulkanLib == NULL )

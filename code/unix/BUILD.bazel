@@ -101,3 +101,17 @@ cc_library(
         "//code/renderercommon",
     ],
 )
+
+cc_library(
+    name = "unix_shared",
+    srcs = [
+        "unix_shared.c",
+    ],
+    deps = [
+        "//code/qcommon",
+    ],
+    linkopts= [
+        "-ldl",
+    ],
+    visibility = ["//visibility:public"],
+)

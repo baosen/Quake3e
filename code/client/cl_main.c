@@ -3309,12 +3309,6 @@ static void CL_SetScaling( float factor, int captureWidth, int captureHeight ) {
 	cls.captureHeight = captureHeight;
 }
 
-
-/*
-============
-CL_InitRef
-============
-*/
 static void CL_InitRef( void ) {
 	refimport_t	rimp;
 	refexport_t	*ret;

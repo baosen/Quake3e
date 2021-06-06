@@ -24,6 +24,7 @@ cc_library(
         "q_shared.c",
         "unzip.c",
         "vm.c",
+        "vm_interpreted.c",
         "vm_x86.c",
     ],
     hdrs = [
