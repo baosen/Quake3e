@@ -68,7 +68,7 @@ cc_library(
         "-DBOTLIB",
     ],
     deps = [
-        "//code/qcommon:common",
+        "//code/qcommon",
     ],
     visibility = ["//visibility:public"],
 )

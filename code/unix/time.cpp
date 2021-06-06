@@ -20,7 +20,7 @@ void InitTimeBase() {
 }
 
 // Returns the time elapsed in milliseconds.
-int Sys_Milliseconds() {
+extern "C" int Sys_Milliseconds() {
   auto tp = GetTimeOfDay();
   if (!sys_timeBase) { // set time base on first call.
     sys_timeBase = tp.tv_sec;

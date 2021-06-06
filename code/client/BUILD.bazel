@@ -1,11 +1,51 @@
 cc_library(
     name = "client",
+    srcs = [
+        "cl_avi.c",
+        "cl_cgame.c",
+        "cl_cin.c",
+        "cl_console.c",
+        "cl_curl.c",
+        "cl_input.c",
+        "cl_jpeg.c",
+        "cl_keys.c",
+        "cl_main.c",
+        "cl_net_chan.c",
+        "cl_parse.c",
+        "cl_scrn.c",
+        "cl_ui.c",
+        "snd_adpcm.c",
+        "snd_codec.c",
+        "snd_codec_wav.c",
+        "snd_dma.c",
+        "snd_main.c",
+        "snd_mem.c",
+        "snd_mix.c",
+        "snd_wavelet.c",
+    ],
     hdrs = [
+        "snd_local.h",
+        "snd_public.h",
+        "cl_curl.h",
         "client.h",
+        "snd_codec.h",
+        ":keys",
+    ],
+    deps = [
+        "//code/botlib",
+        "//code/renderercommon",
+        "//code/ui",
+        "//code/game",
+        "//code/libjpeg",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "keys",
+    srcs = [
         "keys.h",
         "keycodes.h",
-        "snd_public.h",
-        "snd_local.h",
     ],
     visibility = ["//visibility:public"],
 )

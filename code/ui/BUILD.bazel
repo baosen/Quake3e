@@ -1,6 +1,6 @@
-filegroup(
+cc_library(
     name = "ui",
-    srcs = [
+    hdrs = [
         "ui_public.h",
     ],
     visibility = ["//visibility:public"],

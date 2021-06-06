@@ -8,12 +8,12 @@ cc_library(
     ],
     hdrs = [
         "sdl_icon.h",
-        ":common",
+        "sdl_glw.h",
     ],
     deps = [
-        "//code/qcommon:common",
-        "//code/qcommon:keys",
+        "//code/qcommon",
         "//code/client",
+        "//code/unix:linux_signals",
     ],
     copts = [
         "-I/usr/include/SDL2",
@@ -22,16 +22,4 @@ cc_library(
         "-lSDL2",
     ],
     visibility = ["//visibility:public"],
-)
-
-filegroup(
-    name = "common",
-    srcs = [
-        "sdl_glw.h",
-        "//code/client",
-        "//code/cgame",
-        "//code/game",
-        "//code/qcommon",
-        "//code/ui",
-    ],
 )

@@ -19,17 +19,11 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
-// cl_cgame.c  -- client system interaction with client game
-
+// client system interaction with client game
 #include "client.h"
-
-#include "../botlib/botlib.h"
+#include "code/botlib/botlib.h"
 
 extern	botlib_export_t	*botlib_export;
-
-//extern qboolean loadCamera(const char *name);
-//extern void startCamera(int time);
-//extern qboolean getCameraInfo(int time, vec3_t *origin, vec3_t *angles);
 
 /*
 ====================

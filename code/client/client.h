@@ -19,21 +19,22 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
-// client.h -- primary header for client
 
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
-#include "../qcommon/vm_local.h"
-#include "../renderercommon/tr_public.h"
-#include "../ui/ui_public.h"
+// primary header for client
+#include "code/qcommon/q_shared.h"
+#include "code/qcommon/qcommon.h"
+#include "code/qcommon/vm_local.h"
+#include "code/renderercommon/tr_public.h"
+#include "code/ui/ui_public.h"
+#include "code/cgame/cg_public.h"
+#include "code/game/bg_public.h"
+
 #include "keys.h"
 #include "snd_public.h"
-#include "../cgame/cg_public.h"
-#include "../game/bg_public.h"
 
 #ifdef USE_CURL
 #include "cl_curl.h"
-#endif /* USE_CURL */
+#endif
 
 // file full of random crap that gets used to create cl_guid
 #define QKEY_FILE "qkey"

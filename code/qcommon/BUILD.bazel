@@ -1,49 +1,51 @@
-filegroup(
+cc_library(
     name = "qcommon",
     srcs = [
-        "qcommon.h",
-        "q_shared.h",
-        "q_platform.h",
-        "qfiles.h",
-        "vm_local.h",
-        "surfaceflags.h",
-        "cm_public.h",
-        "//code/renderercommon",
-    ],
-    visibility = ["//visibility:public"],
-)
-
-filegroup(
-    name = "internal_common",
-    srcs = [
-        ":qcommon",
-    ],
-)
-
-cc_library(
-    name = "common",
-    srcs = [
+        "cmd.c",
+        "cm_load.c",
+        "cm_patch.c",
+        "cm_polylib.c",
+        "cm_test.c",
+        "cm_trace.c",
         "common.c",
-    ],
-    hdrs = [
-        ":internal_common",
-    ],
-    deps = [
-        "//code/client",
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "keys",
-    srcs = [
+        "cvar.c",
+        "files.c",
+        "history.c",
+        "huffman.c",
+        "huffman_static.c",
         "keys.c",
+        "md4.c",
+        "md5.c",
+        "msg.c",
+        "net_chan.c",
+        "net_ip.c",
+        "puff.c",
+        "q_math.c",
+        "q_shared.c",
+        "unzip.c",
+        "vm.c",
+        "vm_x86.c",
     ],
     hdrs = [
-        ":internal_common",
+        "cm_local.h",
+        "cm_patch.h",
+        "cm_polylib.h",
+        "cm_public.h",
+        "json.h",
+        "puff.h",
+        "qcommon.h",
+        "qfiles.h",
+        "q_platform.h",
+        "q_shared.h",
+        "surfaceflags.h",
+        "unzip.h",
+        "vm_local.h",
+        "//code/client:keys",
     ],
     deps = [
-        "//code/client",
+        "//code/ui",
+        "//code/cgame",
+        "//code/game",
     ],
     visibility = ["//visibility:public"],
 )

@@ -1,6 +1,15 @@
-filegroup(
+cc_library(
     name = "renderercommon",
     srcs = [
+        "tr_font.c",
+        "tr_image_bmp.c",
+        "tr_image_jpg.c",
+        "tr_image_pcx.c",
+        "tr_image_png.c",
+        "tr_image_tga.c",
+        "tr_noise.c",
+    ],
+    hdrs = [
         "vulkan/vk_platform.h",
         "vulkan/vulkan_core.h",
         "vulkan/vulkan_win32.h",
@@ -9,6 +18,10 @@ filegroup(
         "vulkan/vulkan.h",
         "tr_public.h",
         "tr_types.h",
+    ],
+    deps = [
+        "//code/qcommon",
+        "//code/cgame",
     ],
     visibility = ["//visibility:public"],
 )

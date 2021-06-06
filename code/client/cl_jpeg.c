@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "client.h"
-//#include "../qcommon/q_shared.h"
 #include <setjmp.h>
 
 /*
@@ -39,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #	endif
 #else
 #	define JPEG_INTERNALS
-#	include "../libjpeg/jpeglib.h"
+#	include "code/libjpeg/jpeglib.h"
 #endif
 
 /* Catching errors, as done in libjpeg's example.c */

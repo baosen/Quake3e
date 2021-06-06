@@ -23,9 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // load time compiler and execution environment for x86, 32-bit and 64-bit
 
 #include "vm_local.h"
-#include "../ui/ui_public.h"
-#include "../cgame/cg_public.h"
-#include "../game/g_public.h"
+#include "code/ui/ui_public.h"
+#include "code/cgame/cg_public.h"
+#include "code/game/g_public.h"
 
 #ifdef _WIN32
 #include <windows.h>

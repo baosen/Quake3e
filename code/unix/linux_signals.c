@@ -19,8 +19,11 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
+#include "code/qcommon/q_shared.h"
+#include "code/qcommon/qcommon.h"
 #include <signal.h>
 
+/*
 #ifdef _DEBUG
 #include <execinfo.h>
 #include <stdio.h>
@@ -28,11 +31,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <unistd.h>
 #endif
 
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
 #ifndef DEDICATED
-#include "../renderer/tr_local.h"
+#include "code/renderer/tr_local.h"
 #endif
+*/
 
 static qboolean signalcaught = qfalse;
 

@@ -1,6 +1,6 @@
-filegroup(
+cc_library(
     name = "cgame",
-    srcs = [
+    hdrs = [
         "cg_public.h",
     ],
     visibility = ["//visibility:public"],
