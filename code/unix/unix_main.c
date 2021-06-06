@@ -567,7 +567,7 @@ void Sys_SendKeyEvents( void )
 #endif
 }
 
-// Block execution for msec or until input is received.
+// Block execution for milliseconds or until input is received.
 void Sys_Sleep( int msec ) {
 	struct timeval timeout;
 	fd_set fdset;
