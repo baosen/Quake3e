@@ -3,6 +3,7 @@ cc_binary(
     srcs = ["main.cpp"],
     deps = [
         ":game",
+        ":unix_main",
     ],
 )
 
@@ -84,4 +85,19 @@ cc_library(
         "//code/qcommon",
     ],
     visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "unix_main",
+    srcs = [
+        "unix_main.c",
+    ],
+    hdrs = [
+        "linux_local.h",
+    ],
+    deps = [
+        "//code/client",
+        "//code/qcommon",
+        "//code/renderercommon",
+    ],
 )
