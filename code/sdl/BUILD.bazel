@@ -9,11 +9,10 @@ cc_library(
     hdrs = [
         "sdl_icon.h",
         "sdl_glw.h",
-        "//code/client:client_header",
     ],
     deps = [
         "//code/qcommon",
-        "//code/renderercommon",
+        "//code/client",
         "//code/unix:linux_signals",
     ],
     copts = [

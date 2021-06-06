@@ -24,9 +24,11 @@ cc_library(
         "snd_wavelet.c",
     ],
     hdrs = [
+        "snd_local.h",
+        "snd_public.h",
         "cl_curl.h",
+        "client.h",
         "snd_codec.h",
-        ":client_header",
         ":keys",
     ],
     deps = [
@@ -38,7 +40,6 @@ cc_library(
         "//code/server",
         "//code/unix:unix_shared",
         "//code/renderer",
-        "//code/sdl",
     ],
     visibility = ["//visibility:public"],
 )
@@ -48,16 +49,6 @@ filegroup(
     srcs = [
         "keys.h",
         "keycodes.h",
-    ],
-    visibility = ["//visibility:public"],
-)
-
-filegroup(
-    name = "client_header",
-    srcs = [
-        "client.h",
-        "snd_local.h",
-        "snd_public.h",
     ],
     visibility = ["//visibility:public"],
 )
