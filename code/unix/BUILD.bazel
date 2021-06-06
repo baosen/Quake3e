@@ -1,13 +1,3 @@
-cc_binary(
-    name = "main",
-    srcs = [
-        "main.cpp",
-    ],
-    deps = [
-        ":game",
-    ],
-)
-
 cc_test(
     name = "game_test",
     srcs = [
@@ -30,7 +20,8 @@ cc_library(
         ":loop",
         ":init",
         ":unix_main",
-    ]
+    ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
