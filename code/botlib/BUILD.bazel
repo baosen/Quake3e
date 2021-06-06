@@ -64,8 +64,8 @@ cc_library(
         "l_utils.h",
         "aasfile.h",
     ],
-    copts = [
-        "-DBOTLIB",
+    defines = [
+        "BOTLIB",
     ],
     deps = [
         "//code/qcommon",
