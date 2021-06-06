@@ -1,0 +1,24 @@
+cc_library(
+    name = "server",
+    srcs = [
+        "sv_bot.c",
+        "sv_ccmds.c",
+        "sv_client.c",
+        "sv_filter.c",
+        "sv_game.c",
+        "sv_init.c",
+        "sv_main.c",
+        "sv_net_chan.c",
+        "sv_snapshot.c",
+        "sv_world.c",
+    ],
+    hdrs = [
+        "tlds.h",
+        "server.h",
+    ],
+    deps = [
+        "//code/qcommon",
+        "//code/botlib",
+    ],
+    visibility = ["//visibility:public"],
+)

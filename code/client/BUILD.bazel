@@ -37,6 +37,7 @@ cc_library(
         "//code/ui",
         "//code/game",
         "//code/libjpeg",
+        "//code/server",
     ],
     visibility = ["//visibility:public"],
 )

@@ -19,13 +19,11 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
-// server.h
-
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
-#include "../qcommon/vm_local.h"
-#include "../game/g_public.h"
-#include "../game/bg_public.h"
+#include "code/qcommon/q_shared.h"
+#include "code/qcommon/qcommon.h"
+#include "code/qcommon/vm_local.h"
+#include "code/game/g_public.h"
+#include "code/game/bg_public.h"
 
 //=============================================================================
 

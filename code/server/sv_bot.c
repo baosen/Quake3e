@@ -19,10 +19,8 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
-// sv_bot.c
-
 #include "server.h"
-#include "../botlib/botlib.h"
+#include "code/botlib/botlib.h"
 
 typedef struct bot_debugpoly_s
 {
