@@ -4,5 +4,7 @@
 
 int main() {
   assert(Sys_Milliseconds() > 0);
+  InitTimeBase();
+  assert(Sys_Milliseconds() > 0);
   return EXIT_SUCCESS;
 }

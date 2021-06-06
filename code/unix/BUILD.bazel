@@ -1,24 +1,32 @@
 cc_binary(
     name = "main",
-    srcs = ["main.cpp"],
+    srcs = [
+        "main.cpp",
+    ],
+    deps = [
+        ":game",
+    ],
+)
+
+cc_test(
+    name = "game_test",
+    srcs = [
+        "game_test.cpp",
+    ],
     deps = [
         ":game",
         ":unix_main",
     ],
 )
 
-cc_test(
-    name = "game_test",
-    srcs = ["game_test.cpp"],
-    deps = [
-        ":game",
-    ],
-)
-
 cc_library(
     name = "game",
-    srcs = ["game.cpp"],
-    hdrs = ["game.h"],
+    srcs = [
+        "game.cpp",
+    ],
+    hdrs = [
+        "game.h",
+    ],
     deps = [
         ":loop",
         ":init",
@@ -27,19 +35,26 @@ cc_library(
 
 cc_library(
     name = "init",
-    srcs = ["init.cpp"],
-    hdrs = ["init.h"],
+    srcs = [
+        "init.cpp",
+    ],
+    hdrs = [
+        "init.h",
+    ],
     deps = [
         ":command_line",
         ":time",
-        "//code/qcommon",
     ],
 )
 
 cc_library(
     name = "command_line",
-    srcs = ["command_line.cpp"],
-    hdrs = ["command_line.h"],
+    srcs = [
+        "command_line.cpp",
+    ],
+    hdrs = [
+        "command_line.h",
+    ],
 )
 
 cc_test(
@@ -77,8 +92,12 @@ cc_library(
 
 cc_library(
     name = "loop",
-    srcs = ["loop.cpp"],
-    hdrs = ["loop.h"],
+    srcs = [
+        "loop.cpp",
+    ],
+    hdrs = [
+        "loop.h",
+    ],
     deps = [
         ":fpu",
         ":linux_signals",
@@ -88,8 +107,12 @@ cc_library(
 
 cc_library(
     name = "fpu",
-    srcs = ["fpu.cpp"],
-    hdrs = ["fpu.h"],
+    srcs = [
+        "fpu.cpp",
+    ],
+    hdrs = [
+        "fpu.h",
+    ],
 )
 
 cc_library(
