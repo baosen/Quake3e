@@ -15,7 +15,6 @@ cc_test(
     ],
     deps = [
         ":game",
-        ":unix_main",
     ],
 )
 
@@ -30,6 +29,7 @@ cc_library(
     deps = [
         ":loop",
         ":init",
+        ":unix_main",
     ]
 )
 
