@@ -7,8 +7,8 @@
  *
  *****************************************************************************/
 
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
+#include "code/qcommon/q_shared.h"
+#include "code/qcommon/qcommon.h"
 #include "unzip.h"
 
 /* unzip.h -- IO for uncompress .zip files using zlib 
