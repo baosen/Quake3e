@@ -2898,13 +2898,7 @@ static void CL_CheckTimeout( void ) {
 	}
 }
 
-
-/*
-==================
-CL_CheckPaused
-Check whether client has been paused.
-==================
-*/
+// Check whether client has been paused.
 qboolean CL_CheckPaused( void )
 {
 	// if cl_paused->modified is set, the cvar has only been changed in
@@ -2912,30 +2906,16 @@ qboolean CL_CheckPaused( void )
 	// lag behind.
 	if(cl_paused->integer || cl_paused->modified)
 		return qtrue;
-
 	return qfalse;
 }
 
-
-/*
-==================
-CL_NoDelay
-==================
-*/
 qboolean CL_NoDelay( void )
 {
 	if ( CL_VideoRecording() || ( com_timedemo->integer && clc.demofile != FS_INVALID_HANDLE ) )
 		return qtrue;
-
 	return qfalse;
 }
 
-
-/*
-==================
-CL_CheckUserinfo
-==================
-*/
 static void CL_CheckUserinfo( void ) {
 
 	// don't add reliable commands when not yet connected
