@@ -1,8 +1,8 @@
 #include "fpu.h"
 
 extern "C" void IN_Frame();
-void Com_Frame(const bool noDelay) {}
-bool CL_NoDelay() { return false; }
+extern "C" void Com_Frame(const bool noDelay);
+extern "C" bool CL_NoDelay();
 
 void DoGameLoop() {
   for (;;) {

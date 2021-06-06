@@ -558,8 +558,6 @@ void GLimp_Init( glconfig_t *config )
 	InitSig();
 #endif
 
-	Com_DPrintf( "GLimp_Init()\n" );
-
 	glw_state.config = config; // feedback renderer configuration
 
 	in_nograb = Cvar_Get( "in_nograb", "0", CVAR_ARCHIVE );

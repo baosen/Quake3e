@@ -3776,12 +3776,6 @@ static void CL_InitGLimp_Cvars( void )
 #endif
 }
 
-
-/*
-====================
-CL_Init
-====================
-*/
 void CL_Init( void ) {
 	const char *s;
 
