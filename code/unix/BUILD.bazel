@@ -54,10 +54,25 @@ cc_test(
 
 cc_library(
     name = "time",
-    srcs = ["time.cpp"],
+    srcs = [
+        "time.cpp",
+    ],
     hdrs = [
         "time.h",
-    ]
+    ],
+    deps = [
+        ":time_of_day",
+    ],
+)
+
+cc_library(
+    name = "time_of_day",
+    srcs = [
+        "time_of_day.cpp",
+    ],
+    hdrs = [
+        "time_of_day.h",
+    ],
 )
 
 cc_library(

@@ -1,6 +1,4 @@
-#include <sys/time.h>
-
-static timeval GetCurrentTimeOfDay();
+#include "time_of_day.h"
 
 /* base time in seconds, that's our origin
    timeval:tv_sec is an int:
@@ -24,10 +22,4 @@ extern "C" int Sys_Milliseconds() {
     return tp.tv_usec / 1000;
   }
   return (tp.tv_sec - sys_timeBase) * 1000 + tp.tv_usec / 1000;
-}
-
-static timeval GetCurrentTimeOfDay() {
-  timeval tp;
-  gettimeofday(&tp, nullptr);
-  return tp;
 }
