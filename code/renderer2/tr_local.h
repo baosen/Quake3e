@@ -24,16 +24,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef TR_LOCAL_H
 #define TR_LOCAL_H
 
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qfiles.h"
-#include "../qcommon/qcommon.h"
-#include "../renderercommon/tr_public.h"
+#include "code/qcommon/q_shared.h"
+#include "code/qcommon/qfiles.h"
+#include "code/qcommon/qcommon.h"
+#include "code/renderercommon/tr_public.h"
 #include "tr_common.h"
 #include "tr_extratypes.h"
 #include "tr_extramath.h"
 #include "tr_fbo.h"
 #include "tr_postprocess.h"
-#include "../renderer/iqm.h"
+#include "code/renderer/iqm.h"
 #include "qgl.h"
 
 #define GL_INDEX_TYPE		GL_UNSIGNED_INT

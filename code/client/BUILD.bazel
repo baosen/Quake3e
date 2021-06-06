@@ -39,6 +39,7 @@ cc_library(
         "//code/libjpeg",
         "//code/server",
         "//code/unix:unix_shared",
+        "//code/renderer",
     ],
     visibility = ["//visibility:public"],
 )
