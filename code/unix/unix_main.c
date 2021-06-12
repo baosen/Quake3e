@@ -58,11 +58,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "code/qcommon/qcommon.h"
 #include "code/renderercommon/tr_public.h"
 
-#include "linux_local.h" // bk001204
-
 #ifndef DEDICATED
 #include "code/client/client.h"
 #endif
+
+extern void HandleEvents(void);
 
 unsigned sys_frame_time;
 
@@ -701,7 +701,4 @@ void Sys_Print( const char *msg )
 	}
 }
 
-void QDECL Sys_SetStatus( const char *format, ... )
-{
-	return;
-}
+void QDECL Sys_SetStatus( const char *format, ... ) {}

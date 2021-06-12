@@ -122,9 +122,6 @@ cc_library(
     srcs = [
         "unix_main.c",
     ],
-    hdrs = [
-        "linux_local.h",
-    ],
     deps = [
         "//code/client",
         "//code/qcommon",
