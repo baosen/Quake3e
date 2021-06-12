@@ -4408,18 +4408,7 @@ static void Field_CompleteCvarValue( const char *value, const char *current )
 
 	if ( *current != '\0' )
 	{
-#if 0
-		int clen = (int) strlen( current );
-		if ( strncmp( value, current, clen ) == 0 ) // current value is a substring of new value
-		{
-			value += clen;
-			vlen -= clen;
-		}
-		else // modification, nothing to complete
-#endif
-		{
-			return;
-		}
+		return;
 	}
 
 	if ( Field_FindFirstSeparator( (char*)value ) )
