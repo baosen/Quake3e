@@ -48,12 +48,6 @@ char *strlwr( char *s ) {
   return s; // bk001204 - duh
 }
 
-
-/*
-==================
-Sys_RandomBytes
-==================
-*/
 qboolean Sys_RandomBytes( byte *string, int len )
 {
 	FILE *fp;
@@ -238,12 +232,6 @@ char **Sys_ListFiles( const char *directory, const char *extension, const char *
 	return listCopy;
 }
 
-
-/*
-=================
-Sys_FreeFileList
-=================
-*/
 void Sys_FreeFileList( char **list ) {
 	int		i;
 
@@ -258,12 +246,6 @@ void Sys_FreeFileList( char **list ) {
 	Z_Free( list );
 }
 
-
-/*
-=============
-Sys_GetFileStats
-=============
-*/
 qboolean Sys_GetFileStats( const char *filename, fileOffset_t *size, fileTime_t *mtime, fileTime_t *ctime ) {
 	struct stat s;
 
@@ -279,23 +261,11 @@ qboolean Sys_GetFileStats( const char *filename, fileOffset_t *size, fileTime_t 
 	}
 }
 
-
-/*
-=================
-Sys_Mkdir
-=================
-*/
 void Sys_Mkdir( const char *path )
 {
     mkdir( path, 0750 );
 }
 
-
-/*
-=================
-Sys_FOpen
-=================
-*/
 FILE *Sys_FOpen( const char *ospath, const char *mode )
 {
 	struct stat buf;
@@ -307,23 +277,11 @@ FILE *Sys_FOpen( const char *ospath, const char *mode )
 	return fopen( ospath, mode );
 }
 
-
-/*
-==============
-Sys_ResetReadOnlyAttribute
-==============
-*/
 qboolean Sys_ResetReadOnlyAttribute( const char *ospath )
 {
 	return qfalse;
 }
 
-
-/*
-=================
-Sys_Pwd
-=================
-*/
 const char *Sys_Pwd( void ) 
 {
 	static char pwd[ MAX_OSPATH ];
@@ -347,23 +305,11 @@ const char *Sys_Pwd( void )
 	return pwd;
 }
 
-
-/*
-=================
-Sys_DefaultBasePath
-=================
-*/
 const char *Sys_DefaultBasePath( void )
 {
 	return Sys_Pwd();
 }
 
-
-/*
-=================
-Sys_DefaultHomePath
-=================
-*/
 const char *Sys_DefaultHomePath( void )
 {
 	// Used to determine where to store user-specific files
@@ -393,12 +339,6 @@ const char *Sys_DefaultHomePath( void )
 	return ""; // assume current dir
 }
 
-
-/*
- ================
-Sys_SteamPath
-================
-*/
 const char *Sys_SteamPath( void )
 {
 	static char steamPath[ MAX_OSPATH ];
@@ -419,12 +359,6 @@ const char *Sys_SteamPath( void )
 	return steamPath;
 }
 
-
-/*
-=================
-Sys_ShowConsole
-=================
-*/
 void Sys_ShowConsole( int visLevel, qboolean quitOnClose )
 {
 	// not implemented
@@ -439,15 +373,8 @@ LOAD/UNLOAD DLL
 ========================================================================
 */
 
-
 static int dll_err_count = 0;
 
-
-/*
-=================
-Sys_LoadLibrary
-=================
-*/
 void *Sys_LoadLibrary( const char *name )
 {
 	const char *ext;
@@ -462,24 +389,12 @@ void *Sys_LoadLibrary( const char *name )
 	return handle;
 }
 
-
-/*
-=================
-Sys_UnloadLibrary
-=================
-*/
 void Sys_UnloadLibrary( void *handle )
 {
 	if ( handle != NULL )
 		dlclose( handle );
 }
 
-
-/*
-=================
-Sys_LoadFunction
-=================
-*/
 void *Sys_LoadFunction( void *handle, const char *name )
 {
 	const char *error;
@@ -513,12 +428,6 @@ void *Sys_LoadFunction( void *handle, const char *name )
 	return symbol;
 }
 
-
-/*
-=================
-Sys_LoadFunctionErrors
-=================
-*/
 int Sys_LoadFunctionErrors( void )
 {
 	int result = dll_err_count;
@@ -526,12 +435,6 @@ int Sys_LoadFunctionErrors( void )
 	return result;
 }
 
-
-/*
-=================
-Sys_SetAffinityMask
-=================
-*/
 #ifdef USE_AFFINITY_MASK
 void Sys_SetAffinityMask( int mask )
 {
@@ -577,4 +480,4 @@ void Sys_SetAffinityMask( int mask )
 		Com_Printf( S_COLOR_YELLOW "error setting CPU affinity mask %i\n", mask );
 	}
 }
-#endif // USE_AFFINITY_MASK
+#endif
