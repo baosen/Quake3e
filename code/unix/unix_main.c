@@ -23,31 +23,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "code/qcommon/qcommon.h"
 #include "code/renderercommon/tr_public.h"
 #ifndef DEDICATED
-#	include "code/client/client.h"
+#include "code/client/client.h"
 #endif
-#include <unistd.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <ctype.h>
+#include <dlfcn.h>
+#include <errno.h>
 #include <fcntl.h>
+#include <libgen.h> // dirname
+#include <limits.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/ipc.h>
+#include <sys/mman.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
-#include <string.h>
-#include <ctype.h>
+#include <sys/time.h>
+#include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/mman.h>
-#include <errno.h>
-#include <libgen.h> // dirname
-#include <dlfcn.h>
 #include <termios.h>
-#if defined(__linux__)  && defined(__GLIBC__)
-#	include <fpu_control.h> // force dumps on divide by zero.
+#include <unistd.h>
+#if defined(__linux__) && defined(__GLIBC__)
+#include <fpu_control.h> // force dumps on divide by zero.
 #endif
 
 extern void HandleEvents(void);
@@ -55,17 +54,13 @@ extern void HandleEvents(void);
 unsigned sys_frame_time;
 
 qboolean stdin_active = qfalse;
-int      stdin_flags = 0;
+int stdin_flags = 0;
 
 // =============================================================
 // tty console variables
 // =============================================================
 
-typedef enum {
-	TTY_ENABLED,
-	TTY_DISABLED,
-	TTY_ERROR
-} tty_err;
+typedef enum { TTY_ENABLED, TTY_DISABLED, TTY_ERROR } tty_err;
 
 // enable/disabled tty input mode
 // NOTE TTimo this is used during startup, cannot be changed during run
@@ -91,132 +86,111 @@ static field_t tty_con;
 static cvar_t *ttycon_ansicolor = NULL;
 static qboolean ttycon_color_on = qfalse;
 
-tty_err Sys_ConsoleInputInit( void );
+tty_err Sys_ConsoleInputInit(void);
 
 // =======================================================================
 // General routines
 // =======================================================================
 
-qboolean Sys_LowPhysicalMemory( void )
-{
-	return qfalse;
-}
+qboolean Sys_LowPhysicalMemory(void) { return qfalse; }
 
-void Sys_BeginProfiling( void )
-{}
+void Sys_BeginProfiling(void) {}
 
 // =============================================================
 // tty console routines
-// NOTE: if the user is editing a line when something gets printed to the early console then it won't look good
-//   so we provide tty_Clear and tty_Show to be called before and after a stdout or stderr output
+// NOTE: if the user is editing a line when something gets printed to the early
+// console then it won't look good
+//   so we provide tty_Clear and tty_Show to be called before and after a stdout
+//   or stderr output
 // =============================================================
 
 // Flush stdin. I suspect some terminals are sending a LOT of shit.
-static void tty_FlushIn( void )
-{
-	tcflush( STDIN_FILENO, TCIFLUSH );
-}
+static void tty_FlushIn(void) { tcflush(STDIN_FILENO, TCIFLUSH); }
 
 // do a backspace
 // TTimo NOTE: it seems on some terminals just sending '\b' is not enough
 //   so for now, in any case we send "\b \b" .. yeah well ..
 //   (there may be a way to find out if '\b' alone would work though)
-static void tty_Back( void )
-{
-	write( STDOUT_FILENO, "\b \b", 3 );
-}
+static void tty_Back(void) { write(STDOUT_FILENO, "\b \b", 3); }
 
 // clear the display of the line currently edited
 // bring cursor back to beginning of line
-void tty_Hide( void )
-{
-	int i;
+void tty_Hide(void) {
+  int i;
 
-	if ( !ttycon_on )
-		return;
+  if (!ttycon_on)
+    return;
 
-	if ( ttycon_hide )
-	{
-		ttycon_hide++;
-		return;
-	}
+  if (ttycon_hide) {
+    ttycon_hide++;
+    return;
+  }
 
-	if ( tty_con.cursor > 0 )
-	{
-		for ( i = 0; i < tty_con.cursor; i++ )
-		{
-			tty_Back();
-		}
-	}
-	tty_Back(); // delete "]" ? -EC-
-	ttycon_hide++;
+  if (tty_con.cursor > 0) {
+    for (i = 0; i < tty_con.cursor; i++) {
+      tty_Back();
+    }
+  }
+  tty_Back(); // delete "]" ? -EC-
+  ttycon_hide++;
 }
 
 // show the current line
 // FIXME TTimo need to position the cursor if needed??
-void tty_Show( void )
-{
-	if ( !ttycon_on )
-		return;
+void tty_Show(void) {
+  if (!ttycon_on)
+    return;
 
-	if ( ttycon_hide > 0 )
-	{
-		ttycon_hide--;
-		if ( ttycon_hide == 0 )
-		{
-			write( STDOUT_FILENO, "]", 1 ); // -EC-
+  if (ttycon_hide > 0) {
+    ttycon_hide--;
+    if (ttycon_hide == 0) {
+      write(STDOUT_FILENO, "]", 1); // -EC-
 
-			if ( tty_con.cursor > 0 )
-			{
-				write( STDOUT_FILENO, tty_con.buffer, tty_con.cursor );
-			}
-		}
-	}
+      if (tty_con.cursor > 0) {
+        write(STDOUT_FILENO, tty_con.buffer, tty_con.cursor);
+      }
+    }
+  }
 }
 
-// never exit without calling this, or your terminal will be left in a pretty bad state
-void Sys_ConsoleInputShutdown( void )
-{
-	if ( ttycon_on )
-	{
-		tty_Back(); // delete "]" ? -EC-
-		tcsetattr( STDIN_FILENO, TCSADRAIN, &tty_tc );
-	}
+// never exit without calling this, or your terminal will be left in a pretty
+// bad state
+void Sys_ConsoleInputShutdown(void) {
+  if (ttycon_on) {
+    tty_Back(); // delete "]" ? -EC-
+    tcsetattr(STDIN_FILENO, TCSADRAIN, &tty_tc);
+  }
 
-	// Restore blocking to stdin reads
-	if ( stdin_active )
-	{
-		fcntl( STDIN_FILENO, F_SETFL, stdin_flags );
-	}
+  // Restore blocking to stdin reads
+  if (stdin_active) {
+    fcntl(STDIN_FILENO, F_SETFL, stdin_flags);
+  }
 
-	Com_Memset( &tty_con, 0, sizeof( tty_con ) );
+  Com_Memset(&tty_con, 0, sizeof(tty_con));
 
-	stdin_active = qfalse;
-	ttycon_on = qfalse;
+  stdin_active = qfalse;
+  ttycon_on = qfalse;
 
-	ttycon_hide = 0;
+  ttycon_hide = 0;
 }
 
-// Reinitialize console input after receiving SIGCONT, as on Linux the terminal seems to lose all set attributes if user did CTRL+Z and then does fg again.
-void CON_SigCont( int signum )
-{
-	Sys_ConsoleInputInit();
-}
+// Reinitialize console input after receiving SIGCONT, as on Linux the terminal
+// seems to lose all set attributes if user did CTRL+Z and then does fg again.
+void CON_SigCont(int signum) { Sys_ConsoleInputInit(); }
 
-void CON_SigTStp( int signum )
-{
-	sigset_t mask;
+void CON_SigTStp(int signum) {
+  sigset_t mask;
 
-	tty_FlushIn();
-	Sys_ConsoleInputShutdown();
+  tty_FlushIn();
+  Sys_ConsoleInputShutdown();
 
-	sigemptyset( &mask );
-	sigaddset( &mask, SIGTSTP );
-	sigprocmask( SIG_UNBLOCK, &mask, NULL );
+  sigemptyset(&mask);
+  sigaddset(&mask, SIGTSTP);
+  sigprocmask(SIG_UNBLOCK, &mask, NULL);
 
-	signal( SIGTSTP, SIG_DFL );
+  signal(SIGTSTP, SIG_DFL);
 
-	kill( getpid(),  SIGTSTP );
+  kill(getpid(), SIGTSTP);
 }
 
 // =============================================================
@@ -224,452 +198,397 @@ void CON_SigTStp( int signum )
 // =============================================================
 
 // single exit point (regular exit or in case of signal fault)
-void Sys_Exit( int code ) __attribute((noreturn));
-void Sys_Exit( int code )
-{
-	Sys_ConsoleInputShutdown();
+void Sys_Exit(int code) __attribute((noreturn));
+void Sys_Exit(int code) {
+  Sys_ConsoleInputShutdown();
 
 #ifdef NDEBUG // regular behavior
-	// We can't do this
-	//  as long as GL DLL's keep installing with atexit...
-	//exit(ex);
-	_exit( code );
+  // We can't do this
+  //  as long as GL DLL's keep installing with atexit...
+  // exit(ex);
+  _exit(code);
 #else
-	// Give me a backtrace on error exits.
-	assert( code == 0 );
-	exit( code );
+  // Give me a backtrace on error exits.
+  assert(code == 0);
+  exit(code);
 #endif
 }
 
-void Sys_Quit( void )
-{
+void Sys_Quit(void) {
 #ifndef DEDICATED
-	CL_Shutdown( "", qtrue );
+  CL_Shutdown("", qtrue);
 #endif
-	Sys_Exit( 0 );
+  Sys_Exit(0);
 }
 
-void Sys_Init( void )
-{
-	Cvar_Set( "arch", OS_STRING " " ARCH_STRING );
-}
+void Sys_Init(void) { Cvar_Set("arch", OS_STRING " " ARCH_STRING); }
 
-void Sys_Error( const char *format, ... )
-{
-	va_list argptr;
-	char text[1024];
+void Sys_Error(const char *format, ...) {
+  va_list argptr;
+  char text[1024];
 
-	// change stdin to non blocking
-	// NOTE TTimo not sure how well that goes with tty console mode
-	if ( stdin_active )
-	{
-		fcntl( STDIN_FILENO, F_SETFL, stdin_flags );
-	}
+  // change stdin to non blocking
+  // NOTE TTimo not sure how well that goes with tty console mode
+  if (stdin_active) {
+    fcntl(STDIN_FILENO, F_SETFL, stdin_flags);
+  }
 
-	// don't bother do a show on this one heh
-	if ( ttycon_on )
-	{
-		tty_Hide();
-	}
+  // don't bother do a show on this one heh
+  if (ttycon_on) {
+    tty_Hide();
+  }
 
-	va_start( argptr, format );
-	Q_vsnprintf( text, sizeof( text ), format, argptr );
-	va_end( argptr );
+  va_start(argptr, format);
+  Q_vsnprintf(text, sizeof(text), format, argptr);
+  va_end(argptr);
 
 #ifndef DEDICATED
-	CL_Shutdown( text, qtrue );
+  CL_Shutdown(text, qtrue);
 #endif
 
-	fprintf( stderr, "Sys_Error: %s\n", text );
+  fprintf(stderr, "Sys_Error: %s\n", text);
 
-	Sys_Exit( 1 ); // bk010104 - use single exit point.
+  Sys_Exit(1);
 }
 
-void floating_point_exception_handler( int whatever )
-{
-	signal( SIGFPE, floating_point_exception_handler );
+void floating_point_exception_handler(int whatever) {
+  signal(SIGFPE, floating_point_exception_handler);
 }
 
 // initialize the console input (tty mode if wanted and possible)
 // warning: might be called from signal handler
-tty_err Sys_ConsoleInputInit( void )
-{
-	struct termios tc;
-	const char* term;
+tty_err Sys_ConsoleInputInit(void) {
+  struct termios tc;
+  const char *term;
 
-	// TTimo
-	// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=390
-	// ttycon 0 or 1, if the process is backgrounded (running non interactively)
-	// then SIGTTIN or SIGTOU is emitted, if not catched, turns into a SIGSTP
-	signal( SIGTTIN, SIG_IGN );
-	signal( SIGTTOU, SIG_IGN );
+  // TTimo
+  // https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=390
+  // ttycon 0 or 1, if the process is backgrounded (running non interactively)
+  // then SIGTTIN or SIGTOU is emitted, if not catched, turns into a SIGSTP
+  signal(SIGTTIN, SIG_IGN);
+  signal(SIGTTOU, SIG_IGN);
 
-	// If SIGCONT is received, reinitialize console
-	signal( SIGCONT, CON_SigCont );
+  // If SIGCONT is received, reinitialize console
+  signal(SIGCONT, CON_SigCont);
 
-	if ( signal( SIGTSTP, SIG_IGN ) == SIG_DFL )
-	{
-		signal( SIGTSTP, CON_SigTStp );
-	}
+  if (signal(SIGTSTP, SIG_IGN) == SIG_DFL) {
+    signal(SIGTSTP, CON_SigTStp);
+  }
 
-	stdin_flags = fcntl( STDIN_FILENO, F_GETFL, 0 );
-	if ( stdin_flags == -1 )
-	{
-		stdin_active = qfalse;
-		return TTY_ERROR;
-	}
+  stdin_flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+  if (stdin_flags == -1) {
+    stdin_active = qfalse;
+    return TTY_ERROR;
+  }
 
-	// set non-blocking mode
-	fcntl( STDIN_FILENO, F_SETFL, stdin_flags | O_NONBLOCK );
-	stdin_active = qtrue;
+  // set non-blocking mode
+  fcntl(STDIN_FILENO, F_SETFL, stdin_flags | O_NONBLOCK);
+  stdin_active = qtrue;
 
-	// FIXME TTimo initialize this in Sys_Init or something?
-	if ( !ttycon || !ttycon->integer )
-	{
-		ttycon_on = qfalse;
-		return TTY_DISABLED;
+  // FIXME TTimo initialize this in Sys_Init or something?
+  if (!ttycon || !ttycon->integer) {
+    ttycon_on = qfalse;
+    return TTY_DISABLED;
+  }
+  term = getenv("TERM");
+  if (isatty(STDIN_FILENO) != 1 || !term || !strcmp(term, "dumb") ||
+      !strcmp(term, "raw")) {
+    ttycon_on = qfalse;
+    return TTY_ERROR;
+  }
 
-	}
-	term = getenv( "TERM" );
-	if ( isatty( STDIN_FILENO ) != 1 || !term || !strcmp( term, "dumb" ) || !strcmp( term, "raw" ) )
-	{
-		ttycon_on = qfalse;
-		return TTY_ERROR;
-	}
+  Field_Clear(&tty_con);
+  tcgetattr(STDIN_FILENO, &tty_tc);
+  tty_erase = tty_tc.c_cc[VERASE];
+  tty_eof = tty_tc.c_cc[VEOF];
+  tc = tty_tc;
 
-	Field_Clear( &tty_con );
-	tcgetattr( STDIN_FILENO, &tty_tc );
-	tty_erase = tty_tc.c_cc[ VERASE ];
-	tty_eof = tty_tc.c_cc[ VEOF ];
-	tc = tty_tc;
+  /*
+          ECHO: don't echo input characters
+          ICANON: enable canonical mode.  This  enables  the  special
+                  characters  EOF,  EOL,  EOL2, ERASE, KILL, REPRINT,
+                  STATUS, and WERASE, and buffers by lines.
+          ISIG: when any of the characters  INTR,  QUIT,  SUSP,  or
+                  DSUSP are received, generate the corresponding signal
+  */
+  tc.c_lflag &= ~(ECHO | ICANON);
+  /*
+          ISTRIP strip off bit 8
+          INPCK enable input parity checking
+  */
+  tc.c_iflag &= ~(ISTRIP | INPCK);
+  tc.c_cc[VMIN] = 1;
+  tc.c_cc[VTIME] = 0;
+  tcsetattr(STDIN_FILENO, TCSADRAIN, &tc);
 
-	/*
-		ECHO: don't echo input characters
-		ICANON: enable canonical mode.  This  enables  the  special
-			characters  EOF,  EOL,  EOL2, ERASE, KILL, REPRINT,
-			STATUS, and WERASE, and buffers by lines.
-		ISIG: when any of the characters  INTR,  QUIT,  SUSP,  or
-			DSUSP are received, generate the corresponding signal
-	*/
-	tc.c_lflag &= ~(ECHO | ICANON);
-	/*
-		ISTRIP strip off bit 8
-		INPCK enable input parity checking
-	*/
-	tc.c_iflag &= ~(ISTRIP | INPCK);
-	tc.c_cc[VMIN] = 1;
-	tc.c_cc[VTIME] = 0;
-	tcsetattr( STDIN_FILENO, TCSADRAIN, &tc );
+  if (ttycon_ansicolor && ttycon_ansicolor->integer) {
+    ttycon_color_on = qtrue;
+  }
 
-	if ( ttycon_ansicolor && ttycon_ansicolor->integer )
-	{
-		ttycon_color_on = qtrue;
-	}
+  ttycon_on = qtrue;
 
-	ttycon_on = qtrue;
+  tty_Hide();
+  tty_Show();
 
-	tty_Hide();
-	tty_Show();
-
-	return TTY_ENABLED;
+  return TTY_ENABLED;
 }
 
-char *Sys_ConsoleInput( void )
-{
-	// we use this when sending back commands
-	static char text[ sizeof( tty_con.buffer ) ];
-	int avail;
-	char key;
-	char *s;
-	field_t history;
+char *Sys_ConsoleInput(void) {
+  // we use this when sending back commands
+  static char text[sizeof(tty_con.buffer)];
+  int avail;
+  char key;
+  char *s;
+  field_t history;
 
-	if ( ttycon_on )
-	{
-		avail = read( STDIN_FILENO, &key, 1 );
-		if (avail != -1)
-		{
-			// we have something
-			// backspace?
-			// NOTE TTimo testing a lot of values .. seems it's the only way to get it to work everywhere
-			if ((key == tty_erase) || (key == 127) || (key == 8))
-			{
-				if (tty_con.cursor > 0)
-				{
-					tty_con.cursor--;
-					tty_con.buffer[tty_con.cursor] = '\0';
-					tty_Back();
-				}
-				return NULL;
-			}
+  if (ttycon_on) {
+    avail = read(STDIN_FILENO, &key, 1);
+    if (avail != -1) {
+      // we have something
+      // backspace?
+      // NOTE TTimo testing a lot of values .. seems it's the only way to get it
+      // to work everywhere
+      if ((key == tty_erase) || (key == 127) || (key == 8)) {
+        if (tty_con.cursor > 0) {
+          tty_con.cursor--;
+          tty_con.buffer[tty_con.cursor] = '\0';
+          tty_Back();
+        }
+        return NULL;
+      }
 
-			// check if this is a control char
-			if (key && key < ' ')
-			{
-				if (key == '\n')
-				{
-					// push it in history
-					Con_SaveField( &tty_con );
-					s = tty_con.buffer;
-					while ( *s == '\\' || *s == '/' ) // skip leading slashes
-						s++;
-					Q_strncpyz( text, s, sizeof( text ) );
-					Field_Clear( &tty_con );
-					write( STDOUT_FILENO, "\n]", 2 );
-					return text;
-				}
+      // check if this is a control char
+      if (key && key < ' ') {
+        if (key == '\n') {
+          // push it in history
+          Con_SaveField(&tty_con);
+          s = tty_con.buffer;
+          while (*s == '\\' || *s == '/') // skip leading slashes
+            s++;
+          Q_strncpyz(text, s, sizeof(text));
+          Field_Clear(&tty_con);
+          write(STDOUT_FILENO, "\n]", 2);
+          return text;
+        }
 
-				if (key == '\t')
-				{
-					tty_Hide();
-					Field_AutoComplete( &tty_con );
-					tty_Show();
-					return NULL;
-				}
+        if (key == '\t') {
+          tty_Hide();
+          Field_AutoComplete(&tty_con);
+          tty_Show();
+          return NULL;
+        }
 
-				avail = read( STDIN_FILENO, &key, 1 );
-				if (avail != -1)
-				{
-					// VT 100 keys
-					if (key == '[' || key == 'O')
-					{
-						avail = read( STDIN_FILENO, &key, 1 );
-						if (avail != -1)
-						{
-							switch (key)
-							{
-							case 'A':
-								if ( Con_HistoryGetPrev( &history ) )
-								{
-									tty_Hide();
-									tty_con = history;
-									tty_Show();
-								}
-								tty_FlushIn();
-								return NULL;
-								break;
-							case 'B':
-								if ( Con_HistoryGetNext( &history ) )
-								{
-									tty_Hide();
-									tty_con = history;
-									tty_Show();
-								}
-								tty_FlushIn();
-								return NULL;
-								break;
-							case 'C': // right
-							case 'D': // left
-							//case 'H': // home
-							//case 'F': // end
-								return NULL;
-							}
-						}
-					}
-				}
+        avail = read(STDIN_FILENO, &key, 1);
+        if (avail != -1) {
+          // VT 100 keys
+          if (key == '[' || key == 'O') {
+            avail = read(STDIN_FILENO, &key, 1);
+            if (avail != -1) {
+              switch (key) {
+              case 'A':
+                if (Con_HistoryGetPrev(&history)) {
+                  tty_Hide();
+                  tty_con = history;
+                  tty_Show();
+                }
+                tty_FlushIn();
+                return NULL;
+                break;
+              case 'B':
+                if (Con_HistoryGetNext(&history)) {
+                  tty_Hide();
+                  tty_con = history;
+                  tty_Show();
+                }
+                tty_FlushIn();
+                return NULL;
+                break;
+              case 'C': // right
+              case 'D': // left
+                        // case 'H': // home
+                // case 'F': // end
+                return NULL;
+              }
+            }
+          }
+        }
 
-				if ( key == 12 ) // clear teaminal
-				{
-					write( STDOUT_FILENO, "\ec]", 3 );
-					if ( tty_con.cursor )
-					{
-						write( STDOUT_FILENO, tty_con.buffer, tty_con.cursor );
-					}
-					tty_FlushIn();
-					return NULL;
-				}
+        if (key == 12) // clear teaminal
+        {
+          write(STDOUT_FILENO, "\ec]", 3);
+          if (tty_con.cursor) {
+            write(STDOUT_FILENO, tty_con.buffer, tty_con.cursor);
+          }
+          tty_FlushIn();
+          return NULL;
+        }
 
-				Com_DPrintf( "dropping ISCTL sequence: %d, tty_erase: %d\n", key, tty_erase );
-				tty_FlushIn();
-				return NULL;
-			}
-			if ( tty_con.cursor >= sizeof( text ) - 1 )
-				return NULL;
-			// push regular character
-			tty_con.buffer[ tty_con.cursor ] = key;
-			tty_con.cursor++;
-			// print the current line (this is differential)
-			write( STDOUT_FILENO, &key, 1 );
-		}
-		return NULL;
-	}
-	else if ( stdin_active && com_dedicated->integer )
-	{
-		int len;
-		fd_set fdset;
-		struct timeval timeout;
+        Com_DPrintf("dropping ISCTL sequence: %d, tty_erase: %d\n", key,
+                    tty_erase);
+        tty_FlushIn();
+        return NULL;
+      }
+      if (tty_con.cursor >= sizeof(text) - 1)
+        return NULL;
+      // push regular character
+      tty_con.buffer[tty_con.cursor] = key;
+      tty_con.cursor++;
+      // print the current line (this is differential)
+      write(STDOUT_FILENO, &key, 1);
+    }
+    return NULL;
+  } else if (stdin_active && com_dedicated->integer) {
+    int len;
+    fd_set fdset;
+    struct timeval timeout;
 
-		FD_ZERO( &fdset );
-		FD_SET( STDIN_FILENO, &fdset ); // stdin
-		timeout.tv_sec = 0;
-		timeout.tv_usec = 0;
-		if ( select( STDIN_FILENO + 1, &fdset, NULL, NULL, &timeout) == -1 || !FD_ISSET( STDIN_FILENO, &fdset ) )
-		{
-			return NULL;
-		}
+    FD_ZERO(&fdset);
+    FD_SET(STDIN_FILENO, &fdset); // stdin
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 0;
+    if (select(STDIN_FILENO + 1, &fdset, NULL, NULL, &timeout) == -1 ||
+        !FD_ISSET(STDIN_FILENO, &fdset)) {
+      return NULL;
+    }
 
-		len = read( STDIN_FILENO, text, sizeof( text ) );
-		if ( len == 0 ) // eof!
-		{
-			fcntl( STDIN_FILENO, F_SETFL, stdin_flags );
-			stdin_active = qfalse;
-			return NULL;
-		}
+    len = read(STDIN_FILENO, text, sizeof(text));
+    if (len == 0) // eof!
+    {
+      fcntl(STDIN_FILENO, F_SETFL, stdin_flags);
+      stdin_active = qfalse;
+      return NULL;
+    }
 
-		if ( len < 1 )
-			return NULL;
+    if (len < 1)
+      return NULL;
 
-		text[len-1] = '\0'; // rip off the /n and terminate
-		s = text;
+    text[len - 1] = '\0'; // rip off the /n and terminate
+    s = text;
 
-		while ( *s == '\\' || *s == '/' ) // skip leading slashes
-			s++;
+    while (*s == '\\' || *s == '/') // skip leading slashes
+      s++;
 
-		return s;
-	}
+    return s;
+  }
 
-	return NULL;
+  return NULL;
 }
 
 // Platform-dependent event handling.
-void Sys_SendKeyEvents( void )
-{
+void Sys_SendKeyEvents(void) {
 #ifndef DEDICATED
-	HandleEvents();
+  HandleEvents();
 #endif
 }
 
 // Block execution for milliseconds or until input is received.
-void Sys_Sleep( int msec ) {
-	struct timeval timeout;
-	fd_set fdset;
-	int res;
+void Sys_Sleep(int msec) {
+  struct timeval timeout;
+  fd_set fdset;
+  int res;
 
-	if ( msec == 0 )
-		return;
-
-	if ( msec < 0 ) {
-		// special case: wait for console input or network packet
-		if ( stdin_active ) {
-			msec = 300;
-			do {
-				FD_ZERO( &fdset );
-				FD_SET( STDIN_FILENO, &fdset );
-				timeout.tv_sec = msec / 1000;
-				timeout.tv_usec = (msec % 1000) * 1000;
-				res = select( STDIN_FILENO + 1, &fdset, NULL, NULL, &timeout );
-			} while ( res == 0 && NET_Sleep( 10 * 1000 ) );
-		} else {
-			// can happen only if no map loaded
-			// which means we totally stuck as stdin is also disabled :P
-			//usleep( 300 * 1000 );
-			while ( NET_Sleep( 3000 * 1000 ) )
-				;
-		}
-		return;
-	}
-
-	if ( com_dedicated->integer && stdin_active ) {
-		FD_ZERO( &fdset );
-		FD_SET( STDIN_FILENO, &fdset );
-		timeout.tv_sec = msec / 1000;
-		timeout.tv_usec = (msec % 1000) * 1000;
-		select( STDIN_FILENO + 1, &fdset, NULL, NULL, &timeout );
-	} else {
-		usleep( msec * 1000 );
-	}
-}
-
-static struct Q3ToAnsiColorTable_s
-{
-	const char Q3color;
-	const char *ANSIcolor;
-} tty_colorTable[ ] =
-{
-	{ COLOR_BLACK,    "30" },
-	{ COLOR_RED,      "31" },
-	{ COLOR_GREEN,    "32" },
-	{ COLOR_YELLOW,   "33" },
-	{ COLOR_BLUE,     "34" },
-	{ COLOR_CYAN,     "36" },
-	{ COLOR_MAGENTA,  "35" },
-	{ COLOR_WHITE,    "0" }
-};
-
-void Sys_ANSIColorify( const char *msg, char *buffer, int bufferSize )
-{
-  int   msgLength;
-  int   i, j;
-  const char *escapeCode;
-  char  tempBuffer[ 7 ];
-
-  if( !msg || !buffer )
+  if (msec == 0)
     return;
 
-  msgLength = strlen( msg );
-  i = 0;
-  buffer[ 0 ] = '\0';
-
-  while( i < msgLength )
-  {
-    if( msg[ i ] == '\n' )
-    {
-      Com_sprintf( tempBuffer, 7, "%c[0m\n", 0x1B );
-      strncat( buffer, tempBuffer, bufferSize - 1);
-      i++;
+  if (msec < 0) {
+    // special case: wait for console input or network packet
+    if (stdin_active) {
+      msec = 300;
+      do {
+        FD_ZERO(&fdset);
+        FD_SET(STDIN_FILENO, &fdset);
+        timeout.tv_sec = msec / 1000;
+        timeout.tv_usec = (msec % 1000) * 1000;
+        res = select(STDIN_FILENO + 1, &fdset, NULL, NULL, &timeout);
+      } while (res == 0 && NET_Sleep(10 * 1000));
+    } else {
+      // can happen only if no map loaded
+      // which means we totally stuck as stdin is also disabled :P
+      // usleep( 300 * 1000 );
+      while (NET_Sleep(3000 * 1000))
+        ;
     }
-    else if( msg[ i ] == Q_COLOR_ESCAPE )
-    {
+    return;
+  }
+
+  if (com_dedicated->integer && stdin_active) {
+    FD_ZERO(&fdset);
+    FD_SET(STDIN_FILENO, &fdset);
+    timeout.tv_sec = msec / 1000;
+    timeout.tv_usec = (msec % 1000) * 1000;
+    select(STDIN_FILENO + 1, &fdset, NULL, NULL, &timeout);
+  } else {
+    usleep(msec * 1000);
+  }
+}
+
+static struct Q3ToAnsiColorTable_s {
+  const char Q3color;
+  const char *ANSIcolor;
+} tty_colorTable[] = {{COLOR_BLACK, "30"},   {COLOR_RED, "31"},
+                      {COLOR_GREEN, "32"},   {COLOR_YELLOW, "33"},
+                      {COLOR_BLUE, "34"},    {COLOR_CYAN, "36"},
+                      {COLOR_MAGENTA, "35"}, {COLOR_WHITE, "0"}};
+
+void Sys_ANSIColorify(const char *msg, char *buffer, int bufferSize) {
+  int msgLength;
+  int i, j;
+  const char *escapeCode;
+  char tempBuffer[7];
+
+  if (!msg || !buffer)
+    return;
+
+  msgLength = strlen(msg);
+  i = 0;
+  buffer[0] = '\0';
+
+  while (i < msgLength) {
+    if (msg[i] == '\n') {
+      Com_sprintf(tempBuffer, 7, "%c[0m\n", 0x1B);
+      strncat(buffer, tempBuffer, bufferSize - 1);
+      i++;
+    } else if (msg[i] == Q_COLOR_ESCAPE) {
       i++;
 
-      if( i < msgLength )
-      {
+      if (i < msgLength) {
         escapeCode = NULL;
-        for( j = 0; j < ARRAY_LEN( tty_colorTable ); j++ )
-        {
-          if( msg[ i ] == tty_colorTable[ j ].Q3color )
-          {
-            escapeCode = tty_colorTable[ j ].ANSIcolor;
+        for (j = 0; j < ARRAY_LEN(tty_colorTable); j++) {
+          if (msg[i] == tty_colorTable[j].Q3color) {
+            escapeCode = tty_colorTable[j].ANSIcolor;
             break;
           }
         }
 
-        if( escapeCode )
-        {
-          Com_sprintf( tempBuffer, 7, "%c[%sm", 0x1B, escapeCode );
-          strncat( buffer, tempBuffer, bufferSize - 1);
+        if (escapeCode) {
+          Com_sprintf(tempBuffer, 7, "%c[%sm", 0x1B, escapeCode);
+          strncat(buffer, tempBuffer, bufferSize - 1);
         }
 
         i++;
       }
-    }
-    else
-    {
-      Com_sprintf( tempBuffer, 7, "%c", msg[ i++ ] );
-      strncat( buffer, tempBuffer, bufferSize - 1);
+    } else {
+      Com_sprintf(tempBuffer, 7, "%c", msg[i++]);
+      strncat(buffer, tempBuffer, bufferSize - 1);
     }
   }
 }
 
-void Sys_Print( const char *msg )
-{
-	if ( ttycon_on )
-	{
-		tty_Hide();
-	}
+void Sys_Print(const char *msg) {
+  if (ttycon_on) {
+    tty_Hide();
+  }
 
-	if ( ttycon_on && ttycon_color_on )
-	{
-		char ansiColorString[ MAXPRINTMSG ];
-		Sys_ANSIColorify( msg, ansiColorString, MAXPRINTMSG );
-		fputs( ansiColorString, stderr );
-	}
-	else
-		fputs( msg, stderr );
+  if (ttycon_on && ttycon_color_on) {
+    char ansiColorString[MAXPRINTMSG];
+    Sys_ANSIColorify(msg, ansiColorString, MAXPRINTMSG);
+    fputs(ansiColorString, stderr);
+  } else
+    fputs(msg, stderr);
 
-	if ( ttycon_on )
-	{
-		tty_Show();
-	}
+  if (ttycon_on) {
+    tty_Show();
+  }
 }
 
-void QDECL Sys_SetStatus( const char *format, ... ) {}
+void QDECL Sys_SetStatus(const char *format, ...) {}
