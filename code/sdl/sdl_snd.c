@@ -20,15 +20,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-#ifdef USE_LOCAL_HEADERS
-#	include "SDL.h"
-#else
-#	include <SDL.h>
-#endif
-
 #include "code/qcommon/q_shared.h"
 #include "code/client/snd_local.h"
 #include "code/client/client.h"
+#include <SDL.h>
 
 qboolean snd_inited = qfalse;
 
@@ -52,12 +47,6 @@ static cvar_t *s_sdlCapture;
 static float sdlMasterGain = 1.0f;
 #endif
 
-
-/*
-===============
-SNDDMA_AudioCallback
-===============
-*/
 static void SNDDMA_AudioCallback(void *userdata, Uint8 *stream, int len)
 {
 	int pos = (dmapos * (dma.samplebits/8));
@@ -146,11 +135,6 @@ static const struct
 
 static int formatToStringTableSize = ARRAY_LEN( formatToStringTable );
 
-/*
-===============
-SNDDMA_PrintAudiospec
-===============
-*/
 static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 {
 	const char *fmt = NULL;
@@ -175,7 +159,6 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 	Com_Printf( "  Channels: %d\n", (int) spec->channels );
 }
 
-
 static int SNDDMA_KHzToHz( int khz )
 {
 	switch ( khz )
@@ -188,12 +171,6 @@ static int SNDDMA_KHzToHz( int khz )
 	}
 }
 
-
-/*
-===============
-SNDDMA_Init
-===============
-*/
 qboolean SNDDMA_Init( void )
 {
 	SDL_AudioSpec desired;
@@ -341,23 +318,11 @@ qboolean SNDDMA_Init( void )
 	return qtrue;
 }
 
-
-/*
-===============
-SNDDMA_GetDMAPos
-===============
-*/
 int SNDDMA_GetDMAPos( void )
 {
 	return dmapos;
 }
 
-
-/*
-===============
-SNDDMA_Shutdown
-===============
-*/
 void SNDDMA_Shutdown( void )
 {
 	if (sdlPlaybackDevice != 0)
@@ -386,25 +351,12 @@ void SNDDMA_Shutdown( void )
 	Com_Printf("SDL audio shut down.\n");
 }
 
-
-/*
-===============
-SNDDMA_Submit
-
-Send sound to device if buffer isn't really the dma buffer
-===============
-*/
+// Send sound to device if buffer isn't really the dma buffer.
 void SNDDMA_Submit( void )
 {
 	SDL_UnlockAudioDevice( sdlPlaybackDevice );
 }
 
-
-/*
-===============
-SNDDMA_BeginPainting
-===============
-*/
 void SNDDMA_BeginPainting( void )
 {
 	SDL_LockAudioDevice( sdlPlaybackDevice );
