@@ -56,22 +56,6 @@ unsigned sys_frame_time;
 qboolean stdin_active = qfalse;
 int stdin_flags = 0;
 
-// =============================================================
-// tty console variables
-// =============================================================
-
-typedef enum { TTY_ENABLED, TTY_DISABLED, TTY_ERROR } tty_err;
-
-// general flag to tell about tty console mode
-static qboolean ttycon_on = qfalse;
-
-// when printing general stuff to stdout stderr (Sys_Printf)
-//   we need to disable the tty console stuff
-// this increments so we can recursively disable
-static int ttycon_hide = 0;
-
-static field_t tty_con;
-
 qboolean Sys_LowPhysicalMemory(void) { return qfalse; }
 
 void Sys_BeginProfiling(void) {}
@@ -83,13 +67,7 @@ void Sys_ConsoleInputShutdown(void) {
   if (stdin_active) {
     fcntl(STDIN_FILENO, F_SETFL, stdin_flags);
   }
-
-  Com_Memset(&tty_con, 0, sizeof(tty_con));
-
   stdin_active = qfalse;
-  ttycon_on = qfalse;
-
-  ttycon_hide = 0;
 }
 
 // single exit point (regular exit or in case of signal fault)
