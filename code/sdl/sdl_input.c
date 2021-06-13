@@ -636,8 +636,6 @@ void IN_Init( void )
 		return;
 	}
 
-	Com_DPrintf( "\n------- Input Initialization -------\n" );
-
 	in_keyboardDebug = Cvar_Get( "in_keyboardDebug", "0", CVAR_ARCHIVE );
 
 	// mouse variables
@@ -653,8 +651,6 @@ void IN_Init( void )
 
 	Cmd_AddCommand( "minimize", IN_Minimize );
 	Cmd_AddCommand( "in_restart", IN_Restart );
-
-	Com_DPrintf( "------------------------------------\n" );
 }
 
 void IN_Shutdown( void )
