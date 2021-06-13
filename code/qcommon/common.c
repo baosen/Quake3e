@@ -2631,16 +2631,9 @@ void Sys_QueEvent( int evTime, sysEventType_t evType, int value, int value2, int
 	lastEvent = ev;
 }
 
-
-/*
-================
-Com_GetSystemEvent
-================
-*/
 static sysEvent_t Com_GetSystemEvent( void )
 {
 	sysEvent_t  ev;
-	const char	*s;
 	int			evTime;
 
 	// return if we have data
@@ -2650,19 +2643,6 @@ static sysEvent_t Com_GetSystemEvent( void )
 	Sys_SendKeyEvents();
 
 	evTime = Sys_Milliseconds();
-
-	// check for console commands
-	s = Sys_ConsoleInput();
-	if ( s )
-	{
-		char  *b;
-		int   len;
-
-		len = strlen( s ) + 1;
-		b = Z_Malloc( len );
-		strcpy( b, s );
-		Sys_QueEvent( evTime, SE_CONSOLE, 0, 0, len, b );
-	}
 
 	// return if we have data
 	if ( eventHead - eventTail > 0 )
