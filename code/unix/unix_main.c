@@ -179,7 +179,6 @@ void Sys_ConsoleInputShutdown( void )
 {
 	if ( ttycon_on )
 	{
-//		Com_Printf( "Shutdown tty console\n" ); // -EC-
 		tty_Back(); // delete "]" ? -EC-
 		tcsetattr( STDIN_FILENO, TCSADRAIN, &tty_tc );
 	}
@@ -188,7 +187,6 @@ void Sys_ConsoleInputShutdown( void )
 	if ( stdin_active )
 	{
 		fcntl( STDIN_FILENO, F_SETFL, stdin_flags );
-//		fcntl( STDIN_FILENO, F_SETFL, fcntl( STDIN_FILENO, F_GETFL, 0 ) & ~O_NONBLOCK );
 	}
 
 	Com_Memset( &tty_con, 0, sizeof( tty_con ) );
