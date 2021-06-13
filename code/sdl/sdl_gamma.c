@@ -19,15 +19,9 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
-
-#ifdef USE_LOCAL_HEADERS
-#	include "SDL.h"
-#else
-#	include <SDL.h>
-#endif
-
-#include "../client/client.h"
+#include "code/client/client.h"
 #include "sdl_glw.h"
+#include <SDL.h>
 
 static Uint16 r[256];
 static Uint16 g[256];
@@ -43,12 +37,6 @@ void GLimp_InitGamma( glconfig_t *config )
 	}
 }
 
-
-/*
-=================
-GLimp_SetGamma
-=================
-*/
 void GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned char blue[256] )
 {
 	Uint16 table[3][256];
@@ -60,42 +48,6 @@ void GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned 
 		table[1][i] = ( ( ( Uint16 ) green[i] ) << 8 ) | green[i];
 		table[2][i] = ( ( ( Uint16 ) blue[i] ) << 8 ) | blue[i];
 	}
-
-#ifdef _WIN32
-#include <windows.h>
-
-	// Win2K and newer put this odd restriction on gamma ramps...
-	{
-		//OSVERSIONINFO	vinfo;
-		//vinfo.dwOSVersionInfoSize = sizeof( vinfo );
-		//GetVersionEx( &vinfo );
-		//if( vinfo.dwMajorVersion >= 5 && vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT )
-		{
-			qboolean clamped = qfalse;
-			for( j = 0 ; j < 3 ; j++ )
-			{
-				for( i = 0 ; i < 128 ; i++ )
-				{
-					if( table[ j ] [ i] > ( ( 128 + i ) << 8 ) )
-					{
-						table[ j ][ i ] = ( 128 + i ) << 8;
-						clamped = qtrue;
-					}
-				}
-
-				if( table[ j ] [127 ] > 254 << 8 )
-				{
-					table[ j ][ 127 ] = 254 << 8;
-					clamped = qtrue;
-				}
-			}
-			if ( clamped )
-			{
-				Com_DPrintf( "performing gamma clamp.\n" );
-			}
-		}
-	}
-#endif
 
 	// enforce constantly increasing
 	for ( j = 0; j < 3; j++ )
@@ -113,10 +65,6 @@ void GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned 
 	}
 }
 
-
-/*
-** GLW_RestoreGamma
-*/
 void GLW_RestoreGamma( void )
 {
 	// automatically handled by SDL?
