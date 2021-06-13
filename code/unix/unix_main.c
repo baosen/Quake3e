@@ -19,6 +19,12 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
+#include "code/qcommon/q_shared.h"
+#include "code/qcommon/qcommon.h"
+#include "code/renderercommon/tr_public.h"
+#ifndef DEDICATED
+#	include "code/client/client.h"
+#endif
 #include <unistd.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -38,28 +44,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/mman.h>
 #include <errno.h>
 #include <libgen.h> // dirname
-
 #include <dlfcn.h>
-
-#ifdef __linux__
-#ifdef __GLIBC__
-  #include <fpu_control.h> // bk001213 - force dumps on divide by zero
-#endif
-#endif
-
-#if defined(__sun)
-  #include <sys/file.h>
-#endif
-
-// FIXME TTimo should we gard this? most *nix system should comply?
 #include <termios.h>
-
-#include "code/qcommon/q_shared.h"
-#include "code/qcommon/qcommon.h"
-#include "code/renderercommon/tr_public.h"
-
-#ifndef DEDICATED
-#include "code/client/client.h"
+#if defined(__linux__)  && defined(__GLIBC__)
+#	include <fpu_control.h> // force dumps on divide by zero.
 #endif
 
 extern void HandleEvents(void);
@@ -109,15 +97,9 @@ tty_err Sys_ConsoleInputInit( void );
 // General routines
 // =======================================================================
 
-// bk001207
-#define MEM_THRESHOLD 96*1024*1024
-
 qboolean Sys_LowPhysicalMemory( void )
 {
-	//MEMORYSTATUS stat;
-	//GlobalMemoryStatus (&stat);
-	//return (stat.dwTotalPhys <= MEM_THRESHOLD) ? qtrue : qfalse;
-	return qfalse; // bk001207 - FIXME
+	return qfalse;
 }
 
 void Sys_BeginProfiling( void )
@@ -129,16 +111,10 @@ void Sys_BeginProfiling( void )
 //   so we provide tty_Clear and tty_Show to be called before and after a stdout or stderr output
 // =============================================================
 
-// flush stdin, I suspect some terminals are sending a LOT of shit
-// FIXME TTimo relevant?
+// Flush stdin. I suspect some terminals are sending a LOT of shit.
 static void tty_FlushIn( void )
 {
-#if 1
 	tcflush( STDIN_FILENO, TCIFLUSH );
-#else
-	char key;
-	while ( read( STDIN_FILENO, &key, 1 ) > 0 );
-#endif
 }
 
 // do a backspace
@@ -272,14 +248,12 @@ void Sys_Quit( void )
 #ifndef DEDICATED
 	CL_Shutdown( "", qtrue );
 #endif
-
 	Sys_Exit( 0 );
 }
 
 void Sys_Init( void )
 {
 	Cvar_Set( "arch", OS_STRING " " ARCH_STRING );
-	//IN_Init();   // rcg08312005 moved into glimp.
 }
 
 void Sys_Error( const char *format, ... )
@@ -291,7 +265,6 @@ void Sys_Error( const char *format, ... )
 	// NOTE TTimo not sure how well that goes with tty console mode
 	if ( stdin_active )
 	{
-//		fcntl( STDIN_FILENO, F_SETFL, fcntl( STDIN_FILENO, F_GETFL, 0) & ~FNDELAY );
 		fcntl( STDIN_FILENO, F_SETFL, stdin_flags );
 	}
 
