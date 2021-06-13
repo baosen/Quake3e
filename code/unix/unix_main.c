@@ -70,16 +70,14 @@ static qboolean ttycon_on = qfalse;
 // this increments so we can recursively disable
 static int ttycon_hide = 0;
 
-
-
 static field_t tty_con;
-
 
 qboolean Sys_LowPhysicalMemory(void) { return qfalse; }
 
 void Sys_BeginProfiling(void) {}
 
-// never exit without calling this, or your terminal will be left in a pretty bad state.
+// never exit without calling this, or your terminal will be left in a pretty
+// bad state.
 void Sys_ConsoleInputShutdown(void) {
   // Restore blocking to stdin reads
   if (stdin_active) {
@@ -195,8 +193,6 @@ void Sys_Sleep(int msec) {
   }
 }
 
-void Sys_Print(const char *msg) {
-  fputs(msg, stderr);
-}
+void Sys_Print(const char *msg) { fputs(msg, stderr); }
 
 void QDECL Sys_SetStatus(const char *format, ...) {}
