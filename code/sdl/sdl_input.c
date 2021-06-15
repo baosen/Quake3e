@@ -274,13 +274,8 @@ static keyNum_t IN_TranslateSDLToQ3Key( SDL_Keysym *keysym, qboolean down )
 
 	if ( keysym->scancode == SDL_SCANCODE_GRAVE )
 	{
-		//SDL_Keycode translated = SDL_GetKeyFromScancode( SDL_SCANCODE_GRAVE );
-
-		//if ( translated == SDLK_CARET )
-		{
-			// Console keys can't be bound or generate characters
-			key = K_CONSOLE;
-		}
+		// Console keys can't be bound or generate characters
+		key = K_CONSOLE;
 	}
 	else if ( IN_IsConsoleKey( key, 0 ) )
 	{
@@ -322,13 +317,8 @@ static void IN_ActivateMouse( void )
 			SDL_ShowCursor( SDL_FALSE );
 
 		SDL_WarpMouseInWindow( SDL_window, glw_state.window_width / 2, glw_state.window_height / 2 );
-
-#ifdef DEBUG_EVENTS
-		Com_Printf( "%4i %s\n", Sys_Milliseconds(), __func__ );
-#endif
 	}
 
-	// in_nograb makes no sense in fullscreen mode
 	if ( !glw_state.isFullscreen )
 	{
 		if ( in_nograb->modified || !mouseActive )
@@ -381,37 +371,6 @@ static void IN_DeactivateMouse( void )
 	if ( !glw_state.isFullscreen )
 		SDL_ShowCursor( SDL_TRUE );
 }
-
-#ifdef DEBUG_EVENTS
-static const char *eventName( SDL_WindowEventID event )
-{
-	static char buf[32];
-
-	switch ( event )
-	{
-		case SDL_WINDOWEVENT_NONE: return "NONE";
-		case SDL_WINDOWEVENT_SHOWN: return "SHOWN";
-		case SDL_WINDOWEVENT_HIDDEN: return "HIDDEN";
-		case SDL_WINDOWEVENT_EXPOSED: return "EXPOSED";
-		case SDL_WINDOWEVENT_MOVED: return "MOVED";
-		case SDL_WINDOWEVENT_RESIZED: return "RESIZED";
-		case SDL_WINDOWEVENT_SIZE_CHANGED: return "SIZE_CHANGED";
-		case SDL_WINDOWEVENT_MINIMIZED: return "MINIMIZED";
-		case SDL_WINDOWEVENT_MAXIMIZED: return "MAXIMIZED";
-		case SDL_WINDOWEVENT_RESTORED: return "RESTORED";
-		case SDL_WINDOWEVENT_ENTER: return "ENTER";
-		case SDL_WINDOWEVENT_LEAVE: return "LEAVE";
-		case SDL_WINDOWEVENT_FOCUS_GAINED: return "FOCUS_GAINED";
-		case SDL_WINDOWEVENT_FOCUS_LOST: return "FOCUS_LOST";
-		case SDL_WINDOWEVENT_CLOSE: return "CLOSE";
-		case SDL_WINDOWEVENT_TAKE_FOCUS: return "TAKE_FOCUS";
-		case SDL_WINDOWEVENT_HIT_TEST: return "HIT_TEST"; 
-		default:
-			sprintf( buf, "EVENT#%i", event );
-			return buf;
-	}
-}
-#endif
 
 void HandleEvents( void )
 {
@@ -554,9 +513,6 @@ void HandleEvents( void )
 				break;
 
 			case SDL_WINDOWEVENT:
-#ifdef DEBUG_EVENTS
-				Com_Printf( "%4i %s\n", e.window.timestamp, eventName( e.window.event ) );
-#endif
 				switch ( e.window.event )
 				{
 					case SDL_WINDOWEVENT_MOVED:
@@ -594,8 +550,6 @@ static void IN_Minimize( void )
 void IN_Frame()
 {
 	if ( Key_GetCatcher() & KEYCATCH_CONSOLE ) {
-		// temporarily deactivate if not in the game and
-		// running on the desktop with multimonitor configuration
 		if ( !glw_state.isFullscreen || glw_state.monitorCount > 1 ) {
 			IN_DeactivateMouse();
 			return;
