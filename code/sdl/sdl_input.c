@@ -547,6 +547,7 @@ static void IN_Minimize( void )
 	SDL_MinimizeWindow( SDL_window );
 }
 
+// Called on each frame.
 void IN_Frame()
 {
 	if ( Key_GetCatcher() & KEYCATCH_CONSOLE ) {
