@@ -98,9 +98,6 @@ cvar_t *sv_packetdelay;
 cvar_t *com_sv_running;
 
 cvar_t *com_cameraMode;
-#if defined(_WIN32) && defined(_DEBUG)
-cvar_t *com_noErrorInterrupt;
-#endif
 
 // com_speeds times
 int time_game;
@@ -262,14 +259,6 @@ void QDECL Com_Error(errorParm_t code, const char *fmt, ...) {
   static int errorCount;
   static qboolean calledSysError = qfalse;
   int currentTime;
-
-#if defined(_WIN32) && defined(_DEBUG)
-  if (code != ERR_DISCONNECT && code != ERR_NEED_CD) {
-    if (!com_noErrorInterrupt->integer) {
-      DebugBreak();
-    }
-  }
-#endif
 
   if (com_errorEntered) {
     if (!calledSysError) {
