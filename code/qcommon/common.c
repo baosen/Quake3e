@@ -1966,14 +1966,7 @@ void Com_Meminfo_f( void ) {
 	}
 }
 
-
-/*
-===============
-Com_TouchMemory
-
-Touch all known used data to make sure it is paged in
-===============
-*/
+// Touch all known used data to make sure it is paged in.
 void Com_TouchMemory( void ) {
 	const memblock_t *block;
 	const memzone_t *zone;
@@ -2016,12 +2009,6 @@ void Com_TouchMemory( void ) {
 	Com_Printf( "Com_TouchMemory: %i msec\n", end - start );
 }
 
-
-/*
-=================
-Com_InitSmallZoneMemory
-=================
-*/
 void Com_InitSmallZoneMemory( void ) {
 	static byte s_buf[ 512 * 1024 ];
 	int smallZoneSize;
@@ -2032,12 +2019,6 @@ void Com_InitSmallZoneMemory( void ) {
 	Z_ClearZone( smallzone, smallzone, smallZoneSize, 1 );
 }
 
-
-/*
-=================
-Com_InitZoneMemory
-=================
-*/
 static void Com_InitZoneMemory( void ) {
 	int		mainZoneSize;
 	cvar_t	*cv;
@@ -2066,12 +2047,6 @@ static void Com_InitZoneMemory( void ) {
 	Z_ClearZone( mainzone, mainzone, mainZoneSize, 1 );
 }
 
-
-/*
-=================
-Hunk_Log
-=================
-*/
 void Hunk_Log( void ) {
 	hunkblock_t	*block;
 	char		buf[4096];
@@ -2097,12 +2072,6 @@ void Hunk_Log( void ) {
 	FS_Write(buf, strlen(buf), logfile);
 }
 
-
-/*
-=================
-Hunk_SmallLog
-=================
-*/
 void Hunk_SmallLog( void ) {
 	hunkblock_t	*block, *block2;
 	char		buf[4096];
@@ -3921,7 +3890,7 @@ static int Com_TimeVal( int minMsec )
 	return timeVal;
 }
 
-void Com_Frame( qboolean noDelay ) {
+void ComputeNextFrame( qboolean noDelay ) {
 
 #ifndef DEDICATED
 	static int bias = 0;
@@ -4594,12 +4563,6 @@ static qboolean strgtr(const char *s0, const char *s1) {
 	return qfalse;
 }
 
-
-/*
-==================
-Com_SortList
-==================
-*/
 static void Com_SortList( char **list, int n )
 {
 	const char *m;
@@ -4626,12 +4589,6 @@ static void Com_SortList( char **list, int n )
 	if ( n > i ) Com_SortList( list+i, n-i );
 }
 
-
-/*
-==================
-Com_SortFileList
-==================
-*/
 void Com_SortFileList( char **list, int nfiles, int fastSort )
 {
 	if ( nfiles > 1 && fastSort )
