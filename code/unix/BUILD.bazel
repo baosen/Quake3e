@@ -90,20 +90,9 @@ cc_library(
         "loop.h",
     ],
     deps = [
-        ":fpu",
         ":linux_signals",
         "//code/sdl",
     ]
-)
-
-cc_library(
-    name = "fpu",
-    srcs = [
-        "fpu.cpp",
-    ],
-    hdrs = [
-        "fpu.h",
-    ],
 )
 
 cc_library(

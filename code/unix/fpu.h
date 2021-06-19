@@ -1,1 +1,0 @@
-void Sys_ConfigureFPU();

@@ -1,15 +1,12 @@
-#include "fpu.h"
+#include <cstdio>
 
-extern "C" void IN_Frame();
+extern "C" void ActivateMouseUnlessUserWantsItDeactivated();
 extern "C" void Com_Frame(const bool);
 extern "C" bool CL_NoDelay();
 
 void DoGameLoop() {
   for (;;) {
-#ifdef __linux__
-    Sys_ConfigureFPU();
-#endif
-    IN_Frame();
+    ActivateMouseUnlessUserWantsItDeactivated();
     Com_Frame(CL_NoDelay());
   }
 }

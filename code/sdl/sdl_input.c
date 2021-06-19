@@ -548,20 +548,12 @@ static void IN_Minimize( void )
 }
 
 // Called on each frame.
-void IN_Frame()
+void ActivateMouseUnlessUserWantsItDeactivated()
 {
-	if ( Key_GetCatcher() & KEYCATCH_CONSOLE ) {
-		if ( !glw_state.isFullscreen || glw_state.monitorCount > 1 ) {
-			IN_DeactivateMouse();
-			return;
-		}
-	}
-
-	if ( !gw_active || !mouse_focus || in_nograb->integer ) {
+	if ( ((Key_GetCatcher() & KEYCATCH_CONSOLE) && (!glw_state.isFullscreen || glw_state.monitorCount > 1)) || ( !gw_active || !mouse_focus || in_nograb->integer ) ) {
 		IN_DeactivateMouse();
 		return;
 	}
-
 	IN_ActivateMouse();
 }
 
