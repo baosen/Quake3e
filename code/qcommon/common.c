@@ -105,8 +105,6 @@ int time_backend;  // renderer backend time
 
 static int lastTime;
 int com_frameTime;
-int com_frameMsec;
-int com_frameNumber;
 
 qboolean com_errorEntered = qfalse;
 qboolean com_fullyInitialized = qfalse;
@@ -3175,6 +3173,8 @@ static int Com_TimeVal(int minMsec) {
   return timeVal;
 }
 
+// These variables are used to profile the code:
+int com_frameNumber;
 int timeBeforeFirstEvents = 0;
 int timeBeforeServer = 0;
 int timeBeforeEvents = 0;
