@@ -86,7 +86,6 @@ cvar_t *com_blood;
 
 #ifndef DEDICATED
 cvar_t *com_introPlayed;
-cvar_t *com_skipIdLogo;
 
 cvar_t *cl_paused;
 cvar_t *cl_packetdelay;
@@ -2951,7 +2950,6 @@ void Com_Init(const char *commandLine) {
 
 #ifndef DEDICATED
   com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
-  com_skipIdLogo = Cvar_Get("com_skipIdLogo", "0", CVAR_ARCHIVE);
 #endif
 
   if (com_dedicated->integer) {
@@ -3022,8 +3020,6 @@ void Com_Init(const char *commandLine) {
     // if the user didn't give any commands, run default action
     if (!com_dedicated->integer) {
 #ifndef DEDICATED
-      if (!com_skipIdLogo || !com_skipIdLogo->integer)
-        Cbuf_AddText("cinematic idlogo.RoQ\n");
       if (!com_introPlayed->integer) {
         Cvar_Set(com_introPlayed->name, "1");
         Cvar_Set("nextmap", "cinematic intro.RoQ");
