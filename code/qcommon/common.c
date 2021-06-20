@@ -3174,9 +3174,7 @@ static int Com_ModifyMsec(int msec) {
 }
 
 static int Com_TimeVal(int minMsec) {
-  int timeVal;
-
-  timeVal = Com_Milliseconds() - com_frameTime;
+  int timeVal = Com_Milliseconds() - com_frameTime;
 
   if (timeVal >= minMsec)
     timeVal = 0;
@@ -3186,26 +3184,24 @@ static int Com_TimeVal(int minMsec) {
   return timeVal;
 }
 
+int timeBeforeFirstEvents = 0;
+int timeBeforeServer = 0;
+int timeBeforeEvents = 0;
+int timeBeforeClient = 0;
+int timeAfter = 0;
+
 void ComputeNextFrame(qboolean noDelay) {
 #ifndef DEDICATED
   static int bias = 0;
 #endif
-  int msec, realMsec, minMsec;
+  int msec, realMsec, minMsec = 0;
   int sleepMsec;
   int timeVal;
   int timeValSV;
 
-  int timeBeforeFirstEvents;
-  int timeBeforeServer;
-  int timeBeforeEvents;
-  int timeBeforeClient;
-  int timeAfter;
-
   if (setjmp(abortframe)) {
     return; // an ERR_DROP was thrown
   }
-
-  minMsec = 0; // silent compiler warning
 
   // Init to zero. Also, might be clobbered by `longjmp' or `vfork'.
   timeBeforeFirstEvents = 0;
@@ -3382,7 +3378,7 @@ void ComputeNextFrame(qboolean noDelay) {
   NET_FlushPacketQueue();
 
   if (com_speeds->integer) {
-    extern ReportTimingInformation();
+    extern void ReportTimingInformation();
     ReportTimingInformation();
   }
 
@@ -3395,13 +3391,12 @@ void ComputeNextFrame(qboolean noDelay) {
 }
 
 void ReportTimingInformation() {
-  int all, sv, ev, cl;
+  int all = timeAfter - timeBeforeServer;
+  int sv = timeBeforeEvents - timeBeforeServer;
+  int ev = timeBeforeServer - timeBeforeFirstEvents + timeBeforeClient -
+           timeBeforeEvents;
+  int cl = timeAfter - timeBeforeClient;
 
-  all = timeAfter - timeBeforeServer;
-  sv = timeBeforeEvents - timeBeforeServer;
-  ev = timeBeforeServer - timeBeforeFirstEvents + timeBeforeClient -
-       timeBeforeEvents;
-  cl = timeAfter - timeBeforeClient;
   sv -= time_game;
   cl -= time_frontend + time_backend;
 
@@ -3726,10 +3721,10 @@ void Com_RandomBytes(byte *string, int len) {
 }
 
 static qboolean strgtr(const char *s0, const char *s1) {
-  int l0, l1, i;
+  int i;
 
-  l0 = strlen(s0);
-  l1 = strlen(s1);
+  int l0 = strlen(s0);
+  int l1 = strlen(s1);
 
   if (l1 < l0) {
     l0 = l1;
