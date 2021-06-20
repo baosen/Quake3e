@@ -3098,11 +3098,6 @@ void Com_WriteConfiguration(void) {
 #ifndef DEDICATED
   gamedir = Cvar_VariableString("fs_game");
   basegame = Cvar_VariableString("fs_basegame");
-  if (UI_usesUniqueCDKey() && gamedir[0] && Q_stricmp(basegame, gamedir)) {
-    Com_WriteCDKey(gamedir, &cl_cdkey[16]);
-  } else {
-    Com_WriteCDKey(basegame, cl_cdkey);
-  }
 #endif
 }
 
