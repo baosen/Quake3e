@@ -1634,11 +1634,6 @@ static void Zone_Stats(const char *name, const memzone_t *z,
   st.zoneSegments = 1;
   st.freeSmallest = 0x7FFFFFFF;
 
-  // if ( printDetails ) {
-  //	Com_Printf( "---------- %s zone segment #%i ----------\n", name,
-  //zone->segnum );
-  //}
-
   for (block = zone->blocklist.next;;) {
     if (printDetails) {
       int tag = block->tag;
@@ -3192,7 +3187,6 @@ static int Com_TimeVal(int minMsec) {
 }
 
 void ComputeNextFrame(qboolean noDelay) {
-
 #ifndef DEDICATED
   static int bias = 0;
 #endif
@@ -3213,8 +3207,7 @@ void ComputeNextFrame(qboolean noDelay) {
 
   minMsec = 0; // silent compiler warning
 
-  // bk001204 - init to zero.
-  //  also:  might be clobbered by `longjmp' or `vfork'
+  // Init to zero. Also, might be clobbered by `longjmp' or `vfork'.
   timeBeforeFirstEvents = 0;
   timeBeforeServer = 0;
   timeBeforeEvents = 0;
@@ -3388,42 +3381,43 @@ void ComputeNextFrame(qboolean noDelay) {
 
   NET_FlushPacketQueue();
 
-  //
-  // report timing information
-  //
   if (com_speeds->integer) {
-    int all, sv, ev, cl;
-
-    all = timeAfter - timeBeforeServer;
-    sv = timeBeforeEvents - timeBeforeServer;
-    ev = timeBeforeServer - timeBeforeFirstEvents + timeBeforeClient -
-         timeBeforeEvents;
-    cl = timeAfter - timeBeforeClient;
-    sv -= time_game;
-    cl -= time_frontend + time_backend;
-
-    Com_Printf("frame:%i all:%3i sv:%3i ev:%3i cl:%3i gm:%3i rf:%3i bk:%3i\n",
-               com_frameNumber, all, sv, ev, cl, time_game, time_frontend,
-               time_backend);
+    extern ReportTimingInformation();
+    ReportTimingInformation();
   }
 
-  //
-  // trace optimization tracking
-  //
   if (com_showtrace->integer) {
-
-    extern int c_traces, c_brush_traces, c_patch_traces;
-    extern int c_pointcontents;
-
-    Com_Printf("%4i traces  (%ib %ip) %4i points\n", c_traces, c_brush_traces,
-               c_patch_traces, c_pointcontents);
-    c_traces = 0;
-    c_brush_traces = 0;
-    c_patch_traces = 0;
-    c_pointcontents = 0;
+    extern void TraceOptimizationTracking();
+    TraceOptimizationTracking();
   }
 
   com_frameNumber++;
+}
+
+void ReportTimingInformation() {
+  int all, sv, ev, cl;
+
+  all = timeAfter - timeBeforeServer;
+  sv = timeBeforeEvents - timeBeforeServer;
+  ev = timeBeforeServer - timeBeforeFirstEvents + timeBeforeClient -
+       timeBeforeEvents;
+  cl = timeAfter - timeBeforeClient;
+  sv -= time_game;
+  cl -= time_frontend + time_backend;
+
+  Com_Printf("frame:%i all:%3i sv:%3i ev:%3i cl:%3i gm:%3i rf:%3i bk:%3i\n",
+             com_frameNumber, all, sv, ev, cl, time_game, time_frontend,
+             time_backend);
+}
+
+void TraceOptimizationTracking() {
+  extern int c_traces, c_brush_traces, c_patch_traces, c_pointcontents;
+  Com_Printf("%4i traces  (%ib %ip) %4i points\n", c_traces, c_brush_traces,
+             c_patch_traces, c_pointcontents);
+  c_traces = 0;
+  c_brush_traces = 0;
+  c_patch_traces = 0;
+  c_pointcontents = 0;
 }
 
 static void Com_Shutdown(void) {
