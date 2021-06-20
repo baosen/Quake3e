@@ -960,9 +960,11 @@ endif
 ifeq ($(HAVE_VM_COMPILED),true)
   ifeq ($(ARCH),x86)
     Q3OBJ += $(B)/client/vm_x86.o
+    Q3OBJ += $(B)/client/vm_x86_ng.o
   endif
   ifeq ($(ARCH),x86_64)
     Q3OBJ += $(B)/client/vm_x86.o
+    Q3OBJ += $(B)/client/vm_x86_ng.o
   endif
   ifeq ($(ARCH),arm)
     Q3OBJ += $(B)/client/vm_armv7l.o
@@ -1146,9 +1148,11 @@ endif
 ifeq ($(HAVE_VM_COMPILED),true)
   ifeq ($(ARCH),x86)
     Q3DOBJ += $(B)/ded/vm_x86.o
+    Q3DOBJ += $(B)/ded/vm_x86_ng.o
   endif
   ifeq ($(ARCH),x86_64)
     Q3DOBJ += $(B)/ded/vm_x86.o
+    Q3DOBJ += $(B)/ded/vm_x86_ng.o
   endif
   ifeq ($(ARCH),arm)
     Q3DOBJ += $(B)/ded/vm_armv7l.o

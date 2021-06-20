@@ -3571,7 +3571,6 @@ void Field_CompleteKeyBind(int key) {
   }
 
   if (vlen + blen > sizeof(completionField->buffer) - 1) {
-    // vlen = sizeof( completionField->buffer ) - 1 - blen;
     return;
   }
 

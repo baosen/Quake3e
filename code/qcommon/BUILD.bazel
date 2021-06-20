@@ -26,6 +26,7 @@ cc_library(
         "vm.c",
         "vm_interpreted.c",
         "vm_x86.c",
+        "vm_x86_ng.c",
     ],
     hdrs = [
         "cm_local.h",
