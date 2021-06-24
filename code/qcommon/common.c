@@ -3709,7 +3709,7 @@ void Com_RandomBytes(byte *string, int len) {
     string[i] = (unsigned char)(rand() % 256);
 }
 
-static qboolean strgtr(const char *s0, const char *s1) {
+static qboolean IsStringGreaterThan(const char *s0, const char *s1) {
   int i;
 
   int l0 = strlen(s0);
@@ -3765,7 +3765,7 @@ void Com_SortFileList(char **list, int nfiles, int fastSort) {
     do {
       flag = 0;
       for (i = 1; i < nfiles; i++) {
-        if (strgtr(list[i - 1], list[i])) {
+        if (IsStringGreaterThan(list[i - 1], list[i])) {
           char *temp = list[i];
           list[i] = list[i - 1];
           list[i - 1] = temp;
