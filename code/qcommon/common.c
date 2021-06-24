@@ -2813,13 +2813,13 @@ void Com_Init(const char *commandLine) {
   const char *s;
   int qport;
 
-  Com_Printf("%s %s %s\n", SVN_VERSION, PLATFORM_STRING, __DATE__);
+  Com_Printf("%s %s %s\n", Q3_VERSION, PLATFORM_STRING, __DATE__);
 
   if (setjmp(abortframe)) {
     Sys_Error("Error during initialization");
   }
 
-  // bk001129 - do this before anything else decides to push events
+  // Do this before anything else decides to push events.
   Com_InitPushEvent();
 
   Com_InitSmallZoneMemory();
@@ -3047,8 +3047,6 @@ void Com_Init(const char *commandLine) {
 
   Com_Printf("--- Common Initialization Complete ---\n");
 }
-
-//==================================================================
 
 static void Com_WriteConfigToFile(const char *filename) {
   fileHandle_t f;
