@@ -1539,10 +1539,9 @@ char *CopyString(const char *in) {
 }
 
 /*
-==============================================================================
-
 Goals:
-        reproducible without history effects -- no out of memory errors on weird
+
+Reproducible without history effects -- no out of memory errors on weird
 map to map changes allow restarting of the client without fragmentation minimize
 total pages in use at run time minimize total pages needed during load time
 
@@ -1568,8 +1567,6 @@ middle.
   If not, we can choose to make either side the new temp side and push future
   permanent allocations to the other side.  Permanent allocations should be
   kept on the side that has the current greatest wasted highwater mark.
-
-==============================================================================
 */
 
 #define HUNK_MAGIC 0x89537892
