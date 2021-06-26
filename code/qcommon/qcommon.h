@@ -1097,7 +1097,7 @@ void Com_TouchMemory( void );
 
 // commandLine should not include the executable name (argv[0])
 void Com_Init( const char *commandLine );
-void ComputeNextFrame( qboolean noDelay );
+void ComputeNextFrame();
 
 /*
 ==============================================================

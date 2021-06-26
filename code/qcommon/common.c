@@ -3179,7 +3179,9 @@ int timeBeforeEvents = 0;
 int timeBeforeClient = 0;
 int timeAfter = 0;
 
-void ComputeNextFrame(qboolean noDelay) {
+void ComputeNextFrame() {
+  qboolean noDelay = CL_NoDelay();
+
 #ifndef DEDICATED
   static int bias = 0;
 #endif
