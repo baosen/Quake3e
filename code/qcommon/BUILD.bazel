@@ -3,6 +3,7 @@ cc_library(
     srcs = [
         "cdkey.c",
         "cmd.c",
+        "command_line_completion.c",
         "cm_load.c",
         "cm_patch.c",
         "cm_polylib.c",
