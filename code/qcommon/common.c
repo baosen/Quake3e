@@ -1771,9 +1771,7 @@ void Com_TouchMemory(void) {
 
 void Com_InitSmallZoneMemory(void) {
   static byte s_buf[512 * 1024];
-  int smallZoneSize;
-
-  smallZoneSize = sizeof(s_buf);
+  int smallZoneSize = sizeof(s_buf);
   Com_Memset(s_buf, 0, smallZoneSize);
   smallzone = (memzone_t *)s_buf;
   Z_ClearZone(smallzone, smallzone, smallZoneSize, 1);
