@@ -2995,7 +2995,6 @@ void Com_Init(const char *commandLine) {
 #ifndef DEDICATED
   if (!com_dedicated->integer) {
     CL_Init();
-    // Sys_ShowConsole( com_viewlog->integer, qfalse ); // moved down
   }
 #endif
 
