@@ -10,6 +10,7 @@ cc_library(
         "cm_test.c",
         "cm_trace.c",
         "common.c",
+        "events.c",
         "cvar.c",
         "files.c",
         "history.c",
