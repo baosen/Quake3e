@@ -779,31 +779,9 @@ int Com_RealTime(qtime_t *qtime) {
 }
 
 int64_t Sys_Microseconds(void) {
-#ifdef _WIN32
-  static qboolean inited = qfalse;
-  static LARGE_INTEGER base;
-  static LARGE_INTEGER freq;
-  LARGE_INTEGER curr;
-
-  if (!inited) {
-    QueryPerformanceFrequency(&freq);
-    QueryPerformanceCounter(&base);
-    if (!freq.QuadPart) {
-      return (int64_t)Sys_Milliseconds() * 1000LL; // fallback
-    }
-    inited = qtrue;
-    return 0;
-  }
-
-  QueryPerformanceCounter(&curr);
-
-  return ((curr.QuadPart - base.QuadPart) * 1000000LL) / freq.QuadPart;
-#else
   struct timeval curr;
   gettimeofday(&curr, NULL);
-
   return (int64_t)curr.tv_sec * 1000000LL + (int64_t)curr.tv_usec;
-#endif
 }
 
 /*
