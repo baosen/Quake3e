@@ -7,14 +7,10 @@ fileHandle_t com_journalDataFile =
     FS_INVALID_HANDLE; // config files are written here
 
 /*
-===================================================================
 EVENTS AND JOURNALING
 
-In addition to these events, .cfg files are also copied to the
-journaled file
-===================================================================
+In addition to these events, .cfg files are also copied to the journaled file.
 */
-
 #define MAX_PUSHED_EVENTS 256
 static int com_pushedEventsHead = 0;
 static int com_pushedEventsTail = 0;
@@ -50,14 +46,7 @@ void Com_InitJournaling(void) {
   }
 }
 
-/*
-========================================================================
-
-EVENT LOOP
-
-========================================================================
-*/
-
+// Event loop.
 #define MAX_QUED_EVENTS 128
 #define MASK_QUED_EVENTS (MAX_QUED_EVENTS - 1)
 
