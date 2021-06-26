@@ -1,5 +1,3 @@
-#include <cstdio>
-
 extern "C" void ActivateMouseUnlessUserWantsItDeactivated();
 extern "C" void ComputeNextFrame();
 
