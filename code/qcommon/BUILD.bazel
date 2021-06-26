@@ -1,6 +1,7 @@
 cc_library(
     name = "qcommon",
     srcs = [
+        "cdkey.c",
         "cmd.c",
         "cm_load.c",
         "cm_patch.c",
