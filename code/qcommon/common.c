@@ -112,7 +112,7 @@ qboolean gw_active = qtrue;
 
 static char com_errorMessage[MAXPRINTMSG];
 
-static void Com_Shutdown(void);
+static void ShutdownGame(void);
 static void Com_WriteConfig_f(void);
 void CIN_CloseAllVideos(void);
 
@@ -354,7 +354,7 @@ void QDECL Com_Error(errorParm_t code, const char *fmt, ...) {
     VM_Forced_Unload_Done();
   }
 
-  Com_Shutdown();
+  ShutdownGame();
 
   calledSysError = qtrue;
   Sys_Error("%s", com_errorMessage);
@@ -375,7 +375,7 @@ void Com_Quit_f(void) {
     CL_Shutdown(p[0] ? p : "Client quit", qtrue);
 #endif
     VM_Forced_Unload_Done();
-    Com_Shutdown();
+    ShutdownGame();
     FS_Shutdown(qtrue);
   }
   Sys_Quit();
@@ -2814,7 +2814,7 @@ void ComputeNextFrame() {
   CountFrameNumber();
 }
 
-static void Com_Shutdown(void) {
+static void ShutdownGame(void) {
   if (logfile != FS_INVALID_HANDLE) {
     FS_FCloseFile(logfile);
     logfile = FS_INVALID_HANDLE;
