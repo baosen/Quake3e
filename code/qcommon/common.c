@@ -1948,7 +1948,6 @@ void SV_ShutdownGameProgs(void);
 
 // The server calls this before shutting down or loading a new map.
 void Hunk_Clear(void) {
-
 #ifndef DEDICATED
   CL_ShutdownCGame();
   CL_ShutdownUI();
