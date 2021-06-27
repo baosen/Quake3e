@@ -2670,9 +2670,7 @@ void Com_Init(const char *commandLine) {
 }
 
 static void Com_WriteConfigToFile(const char *filename) {
-  fileHandle_t f;
-
-  f = FS_FOpenFileWrite(filename);
+  fileHandle_t f = FS_FOpenFileWrite(filename);
   if (f == FS_INVALID_HANDLE) {
     if (!FS_ResetReadOnlyAttribute(filename) ||
         (f = FS_FOpenFileWrite(filename)) == FS_INVALID_HANDLE) {
@@ -2793,7 +2791,6 @@ static int Com_TimeVal(int minMsec) {
 }
 
 // These variables are used to profile the code:
-int com_frameNumber;
 int timeBeforeFirstEvents = 0;
 int timeBeforeServer = 0;
 int timeBeforeEvents = 0;
@@ -2912,9 +2909,7 @@ void ComputeNextFrame() {
   // mess with msec if needed
   msec = Com_ModifyMsec(realMsec);
 
-  //
-  // server side
-  //
+  // server side code:
   if (com_speeds->integer) {
     timeBeforeServer = Sys_Milliseconds();
   }
@@ -2958,9 +2953,7 @@ void ComputeNextFrame() {
     timeBeforeClient = timeAfter;
   }
 #else
-  //
-  // client system
-  //
+  // client system code:
   if (!com_dedicated->integer) {
     //
     // run event loop a second time to get server to client packets
@@ -2989,16 +2982,26 @@ void ComputeNextFrame() {
 
   NET_FlushPacketQueue();
 
+  extern void DisplayMetricsIfEnabled();
+  DisplayMetricsIfEnabled();
+  extern void CountFrameNumber();
+  CountFrameNumber();
+}
+
+void DisplayMetricsIfEnabled() {
   if (com_speeds->integer) {
     extern void ReportTimingInformation();
     ReportTimingInformation();
   }
-
   if (com_showtrace->integer) {
     extern void TraceOptimizationTracking();
     TraceOptimizationTracking();
   }
+}
 
+int com_frameNumber = 0;
+
+void CountFrameNumber() {
   com_frameNumber++;
 }
 
