@@ -2472,18 +2472,7 @@ void Com_Init(const char *commandLine) {
   }
 #endif
 
-  // add + commands from command line
-  if (!Com_AddStartupCommands()) {
-    // if the user didn't give any commands, run default action
-    if (!com_dedicated->integer) {
-#ifndef DEDICATED
-      if (!com_introPlayed->integer) {
-        Cvar_Set(com_introPlayed->name, "1");
-        Cvar_Set("nextmap", "cinematic intro.RoQ");
-      }
-#endif
-    }
-  }
+  Com_AddStartupCommands();
 
 #ifndef DEDICATED
   CL_StartHunkUsers();
