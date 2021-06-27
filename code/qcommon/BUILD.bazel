@@ -24,6 +24,7 @@ cc_library(
         "net_chan.c",
         "net_ip.c",
         "puff.c",
+        "processor.c",
         "q_math.c",
         "q_shared.c",
         "unzip.c",
