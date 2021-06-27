@@ -17,6 +17,7 @@ cc_library(
         "huffman.c",
         "huffman_static.c",
         "keys.c",
+        "metrics.c",
         "md4.c",
         "md5.c",
         "msg.c",
