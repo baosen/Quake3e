@@ -50,7 +50,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define XSTRING(x)	STRING(x)
 #define STRING(x)	#x
 
-//#define	PRE_RELEASE_DEMO
 #define DELAY_WRITECONFIG
 
 //============================================================================
