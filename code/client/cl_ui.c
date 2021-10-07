@@ -21,18 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "client.h"
-
 #include "../botlib/botlib.h"
 
 extern	botlib_export_t	*botlib_export;
 
 vm_t *uivm = NULL;
 
-/*
-====================
-GetClientState
-====================
-*/
 static void GetClientState( uiClientState_t *state ) {
 	state->connectPacketCount = clc.connectPacketCount;
 	state->connState = cls.state;
@@ -42,12 +36,6 @@ static void GetClientState( uiClientState_t *state ) {
 	state->clientNum = cl.snap.ps.clientNum;
 }
 
-
-/*
-====================
-LAN_LoadCachedServers
-====================
-*/
 void LAN_LoadCachedServers( void ) {
 	fileHandle_t fileIn;
 	int size, file_size;
@@ -78,12 +66,6 @@ void LAN_LoadCachedServers( void ) {
 	FS_FCloseFile( fileIn );
 }
 
-
-/*
-====================
-LAN_SaveServersToCache
-====================
-*/
 void LAN_SaveServersToCache( void ) {
 	fileHandle_t fileOut;
 	int size;
@@ -102,12 +84,6 @@ void LAN_SaveServersToCache( void ) {
 	FS_FCloseFile(fileOut);
 }
 
-
-/*
-====================
-LAN_ResetPings
-====================
-*/
 static void LAN_ResetPings(int source) {
 	int count,i;
 	serverInfo_t *servers = NULL;
@@ -135,12 +111,6 @@ static void LAN_ResetPings(int source) {
 	}
 }
 
-
-/*
-====================
-LAN_AddServer
-====================
-*/
 static int LAN_AddServer(int source, const char *name, const char *address) {
 	int max, *count, i;
 	netadr_t adr;
@@ -183,12 +153,6 @@ static int LAN_AddServer(int source, const char *name, const char *address) {
 	return -1;
 }
 
-
-/*
-====================
-LAN_RemoveServer
-====================
-*/
 static void LAN_RemoveServer(int source, const char *addr) {
 	int *count, i;
 	serverInfo_t *servers = NULL;
@@ -225,12 +189,6 @@ static void LAN_RemoveServer(int source, const char *addr) {
 	}
 }
 
-
-/*
-====================
-LAN_GetServerCount
-====================
-*/
 static int LAN_GetServerCount( int source ) {
 	switch (source) {
 		case AS_LOCAL :
@@ -247,12 +205,6 @@ static int LAN_GetServerCount( int source ) {
 	return 0;
 }
 
-
-/*
-====================
-LAN_GetLocalServerAddressString
-====================
-*/
 static void LAN_GetServerAddressString( int source, int n, char *buf, int buflen ) {
 	switch (source) {
 		case AS_LOCAL :
@@ -278,12 +230,6 @@ static void LAN_GetServerAddressString( int source, int n, char *buf, int buflen
 	buf[0] = '\0';
 }
 
-
-/*
-====================
-LAN_GetServerInfo
-====================
-*/
 static void LAN_GetServerInfo( int source, int n, char *buf, int buflen ) {
 	char info[MAX_STRING_CHARS];
 	serverInfo_t *server = NULL;
@@ -330,12 +276,6 @@ static void LAN_GetServerInfo( int source, int n, char *buf, int buflen ) {
 	}
 }
 
-
-/*
-====================
-LAN_GetServerPing
-====================
-*/
 static int LAN_GetServerPing( int source, int n ) {
 	serverInfo_t *server = NULL;
 	switch (source) {
@@ -362,11 +302,6 @@ static int LAN_GetServerPing( int source, int n ) {
 	return -1;
 }
 
-/*
-====================
-LAN_GetServerPtr
-====================
-*/
 static serverInfo_t *LAN_GetServerPtr( int source, int n ) {
 	switch (source) {
 		case AS_LOCAL :
@@ -389,12 +324,6 @@ static serverInfo_t *LAN_GetServerPtr( int source, int n ) {
 	return NULL;
 }
 
-
-/*
-====================
-LAN_CompareServers
-====================
-*/
 static int LAN_CompareServers( int source, int sortKey, int sortDir, int s1, int s2 ) {
 	int res;
 	serverInfo_t *server1, *server2;
@@ -459,52 +388,22 @@ static int LAN_CompareServers( int source, int sortKey, int sortDir, int s1, int
 	return res;
 }
 
-
-/*
-====================
-LAN_GetPingQueueCount
-====================
-*/
 static int LAN_GetPingQueueCount( void ) {
 	return (CL_GetPingQueueCount());
 }
 
-
-/*
-====================
-LAN_ClearPing
-====================
-*/
 static void LAN_ClearPing( int n ) {
 	CL_ClearPing( n );
 }
 
-
-/*
-====================
-LAN_GetPing
-====================
-*/
 static void LAN_GetPing( int n, char *buf, int buflen, int *pingtime ) {
 	CL_GetPing( n, buf, buflen, pingtime );
 }
 
-
-/*
-====================
-LAN_GetPingInfo
-====================
-*/
 static void LAN_GetPingInfo( int n, char *buf, int buflen ) {
 	CL_GetPingInfo( n, buf, buflen );
 }
 
-
-/*
-====================
-LAN_MarkServerVisible
-====================
-*/
 static void LAN_MarkServerVisible(int source, int n, qboolean visible ) {
 	if (n == -1) {
 		int count = MAX_OTHER_SERVERS;
@@ -550,12 +449,6 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible ) {
 	}
 }
 
-
-/*
-=======================
-LAN_ServerIsVisible
-=======================
-*/
 static int LAN_ServerIsVisible(int source, int n ) {
 	switch (source) {
 		case AS_LOCAL :
@@ -578,42 +471,18 @@ static int LAN_ServerIsVisible(int source, int n ) {
 	return qfalse;
 }
 
-
-/*
-=======================
-LAN_UpdateVisiblePings
-=======================
-*/
 qboolean LAN_UpdateVisiblePings(int source ) {
 	return CL_UpdateVisiblePings_f(source);
 }
 
-
-/*
-====================
-LAN_GetServerStatus
-====================
-*/
 static int LAN_GetServerStatus( const char *serverAddress, char *serverStatus, int maxLen ) {
 	return CL_ServerStatus( serverAddress, serverStatus, maxLen );
 }
 
-
-/*
-====================
-CL_GetGlConfig
-====================
-*/
 static void CL_GetGlconfig( glconfig_t *config ) {
 	*config = *re.GetConfig();
 }
 
-
-/*
-====================
-CL_GetClipboardData
-====================
-*/
 static void CL_GetClipboardData( char *buf, int buflen ) {
 	char	*cbd;
 
@@ -629,22 +498,10 @@ static void CL_GetClipboardData( char *buf, int buflen ) {
 	Z_Free( cbd );
 }
 
-
-/*
-====================
-Key_KeynumToStringBuf
-====================
-*/
 static void Key_KeynumToStringBuf( int keynum, char *buf, int buflen ) {
 	Q_strncpyz( buf, Key_KeynumToString( keynum ), buflen );
 }
 
-
-/*
-====================
-Key_GetBindingBuf
-====================
-*/
 static void Key_GetBindingBuf( int keynum, char *buf, int buflen ) {
 	const char *value;
 
@@ -657,12 +514,6 @@ static void Key_GetBindingBuf( int keynum, char *buf, int buflen ) {
 	}
 }
 
-
-/*
-====================
-CLUI_GetCDKey
-====================
-*/
 static void CLUI_GetCDKey( char *buf, int buflen ) {
 #ifndef STANDALONE
 	const char *gamedir;
@@ -679,12 +530,6 @@ static void CLUI_GetCDKey( char *buf, int buflen ) {
 #endif
 }
 
-
-/*
-====================
-CLUI_SetCDKey
-====================
-*/
 #ifndef STANDALONE
 static void CLUI_SetCDKey( char *buf ) {
 	const char *gamedir;
@@ -702,12 +547,6 @@ static void CLUI_SetCDKey( char *buf ) {
 }
 #endif
 
-
-/*
-====================
-GetConfigString
-====================
-*/
 static int GetConfigString(int index, char *buf, int size)
 {
 	int		offset;
@@ -728,24 +567,12 @@ static int GetConfigString(int index, char *buf, int size)
 	return qtrue;
 }
 
-
-/*
-====================
-FloatAsInt
-====================
-*/
 static int FloatAsInt( float f ) {
 	floatint_t fi;
 	fi.f = f;
 	return fi.i;
 }
 
-
-/*
-====================
-VM_ArgPtr
-====================
-*/
 static void *VM_ArgPtr( intptr_t intValue ) {
 
 	if ( !intValue || uivm == NULL )
@@ -756,7 +583,6 @@ static void *VM_ArgPtr( intptr_t intValue ) {
 	else
 		return (void *)(uivm->dataBase + (intValue & uivm->dataMask));
 }
-
 
 static qboolean UI_GetValue( char* value, int valueSize, const char* key ) {
 
@@ -773,14 +599,7 @@ static qboolean UI_GetValue( char* value, int valueSize, const char* key ) {
 	return qfalse;
 }
 
-
-/*
-====================
-CL_UISystemCalls
-
-The ui module is making a system call
-====================
-*/
+/* The ui module is making a system call */
 static intptr_t CL_UISystemCalls( intptr_t *args ) {
 	switch( args[0] ) {
 	case UI_ERROR:
@@ -1180,12 +999,6 @@ static intptr_t CL_UISystemCalls( intptr_t *args ) {
 	return 0;
 }
 
-
-/*
-====================
-UI_DllSyscall
-====================
-*/
 static intptr_t QDECL UI_DllSyscall( intptr_t arg, ... ) {
 #if !id386 || defined __clang__
 	intptr_t	args[10]; // max.count for UI
@@ -1204,12 +1017,6 @@ static intptr_t QDECL UI_DllSyscall( intptr_t arg, ... ) {
 #endif
 }
 
-
-/*
-====================
-CL_ShutdownUI
-====================
-*/
 void CL_ShutdownUI( void ) {
 	Key_SetCatcher( Key_GetCatcher() & ~KEYCATCH_UI );
 	cls.uiStarted = qfalse;
@@ -1222,12 +1029,6 @@ void CL_ShutdownUI( void ) {
 	FS_VM_CloseFiles( H_Q3UI );
 }
 
-
-/*
-====================
-CL_InitUI
-====================
-*/
 #define UI_OLD_API_VERSION	4
 
 void CL_InitUI( void ) {
@@ -1285,7 +1086,6 @@ void CL_InitUI( void ) {
 	}
 }
 
-
 #ifndef STANDALONE
 qboolean UI_usesUniqueCDKey( void ) {
 	if (uivm) {
@@ -1296,14 +1096,7 @@ qboolean UI_usesUniqueCDKey( void ) {
 }
 #endif
 
-
-/*
-====================
-UI_GameCommand
-
-See if the current console command is claimed by the ui
-====================
-*/
+/* See if the current console command is claimed by the ui */
 qboolean UI_GameCommand( void ) {
 	if ( !uivm ) {
 		return qfalse;
